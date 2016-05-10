@@ -46,25 +46,28 @@ myTempDirectory = "/tmp/"
 
 app = Flask(__name__)
 
-@app.route('/install_library')
+@app.route('/install_library', methods=['GET', 'POST'])
 def install_library():
-     # arduino --install-library "Bridge:1.0.0,Servo:1.2.0"
-      theLibrary = "??"
-      cmd = myArduinoExe+" "+myInstallLibrary+" "+theLibrary
-      print("%s ..." % cmd)
-      #theResult = exec(cmd)
-      print(" Done.\n")
-    return 'Done!'
+     # arduino --install-library "Bridge:1.0.0"
+    if request.method == 'POST':
+      theLibrary = request.form['library']
+      myCmd = myArduinoExe+" "+myInstallLibrary+" "+theLibrary
+      print("%s ..." % myCmd)
+      #theResult = exec(myCmd)
+      print(" Done. Result:%s\n" % theResult)
+    return render_template('install_library.html', cmd=myCmd, result=theResult)
 
-#@app.route('/install_boards')
+
+@app.route('/install_boards', methods=['GET', 'POST'])
 def install_boards():
      # arduino --install-boards "arduino:sam"
-      theBoard = "??"
-      cmd = myArduinoExe+" "+myInstallBoard+" "+theBoard
-      print("%s ..." % cmd)
-      #theResult = exec(cmd)
-      print(" Done.\n")
-    return 'Done!'
+    if request.method == 'POST':
+      theBoard = request.form['board']
+      myCmd = myArduinoExe+" "+myInstallBoard+" "+theBoard
+      print("%s ..." % myCmd)
+      #theResult = exec(myCmd)
+      print(" Done. Result:%s\n" % theResult)
+    return render_template('install_boards.html', cmd=myCmd, result=theResult)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -76,12 +79,12 @@ def upload_file():
       f = request.files['the_file']
       f.save(myTempDirectory + myFileName)
       
-      compileCmd = myArduinoExe+" "+myBoardOptions+" "+myBoard+" "+myTargetOption+" "+myTarget+" "+myOtherOptions+" "+myCompileAndUploadOption+" "+myTempDirectory+myFileName
-      print("%s ..." % compileCmd)
-      #theResult = exec(compileCmd)
+      myCmd = myArduinoExe+" "+myBoardOptions+" "+myBoard+" "+myTargetOption+" "+myTarget+" "+myOtherOptions+" "+myCompileAndUploadOption+" "+myTempDirectory+myFileName
+      print("%s ..." % myCmd)
+      #theResult = exec(myCmd)
       print(" Done.\n")
     
-    return render_template('main.html', code=theCode, result=theResult)
+    return render_template('main.html', code=theCode, result=theResult, cmd=myCmd)
         
 if __name__ == '__main__':
     app.run(port=myPort)
