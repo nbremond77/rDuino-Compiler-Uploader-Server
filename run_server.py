@@ -43,11 +43,14 @@ myOtherOptions = ""
 
 myTempDirectory = "/tmp/"
 
-
+# Define the main application
 app = Flask(__name__)
 
+# Define the routes
 @app.route('/install_library', methods=['GET', 'POST'])
 def install_library():
+    myCmd = ""
+    theResult = ""
      # arduino --install-library "Bridge:1.0.0"
     if request.method == 'POST':
       theLibrary = request.form['library']
@@ -60,6 +63,8 @@ def install_library():
 
 @app.route('/install_boards', methods=['GET', 'POST'])
 def install_boards():
+    myCmd = ""
+    theResult = ""
      # arduino --install-boards "arduino:sam"
     if request.method == 'POST':
       theBoard = request.form['board']
@@ -72,10 +77,11 @@ def install_boards():
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
+    theResult = ""
+    theCode = "??"
     if request.method == 'POST':
-      theCode = "??"
-      theResult = ""
       myFileName = 'uploaded_file.txt'
+      theCode = "??"
       f = request.files['the_file']
       f.save(myTempDirectory + myFileName)
       
@@ -85,6 +91,7 @@ def upload_file():
       print(" Done.\n")
     
     return render_template('main.html', code=theCode, result=theResult, cmd=myCmd)
-        
+
+# Start the main server
 if __name__ == '__main__':
     app.run(port=myPort)
