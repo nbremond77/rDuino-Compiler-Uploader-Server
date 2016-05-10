@@ -3,198 +3,32 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="UTF-8">
-<style>
-* {
-    box-sizing: border-box;
-}
-body {
-    color:white;
-    background-color:black;
-    background-image:url("../static/douche6.jpg");
-    background-repeat:no-repeat;
-    background-size: 100% auto;
-}
-img {
-    width: 100%;
-    height: auto;
-}
-#buttonLeft {
-    position: fixed; 
-    top: 10px;
-    left: 10px;
-    width:70px;
-    height: auto;
-    z-index: 10000;
-}
-#buttonRight {
-    position: fixed; 
-    top: 10px;
-    right: 10px;
-    width:70px;
-    height: auto;
-    z-index: 10000;
-}
-.row:after {
-    content: "";
-    clear: both;
-    display: block;
-}
-[class*="col-"] {
-    float: left;
-    padding: 15px;
-    width: 100%;
-}
-@media only screen and (min-width: 400px) {
-    .col-s-1 {width: 8.33%;}
-    .col-s-2 {width: 16.66%;}
-    .col-s-3 {width: 25%;}
-    .col-s-4 {width: 33.33%;}
-    .col-s-5 {width: 41.66%;}
-    .col-s-6 {width: 50%;}
-    .col-s-7 {width: 58.33%;}
-    .col-s-8 {width: 66.66%;}
-    .col-s-9 {width: 75%;}
-    .col-s-10 {width: 83.33%;}
-    .col-s-11 {width: 91.66%;}
-    .col-s-12 {width: 100%;}
-}
-@media only screen and (min-width: 768px) {
-    .col-1 {width: 8.33%;}
-    .col-2 {width: 16.66%;}
-    .col-3 {width: 25%;}
-    .col-4 {width: 33.33%;}
-    .col-5 {width: 41.66%;}
-    .col-6 {width: 50%;}
-    .col-7 {width: 58.33%;}
-    .col-8 {width: 66.66%;}
-    .col-9 {width: 75%;}
-    .col-10 {width: 83.33%;}
-    .col-11 {width: 91.66%;}
-    .col-12 {width: 100%;}
-}
-html {
-    font-family: "Lucida Sans", sans-serif;
-}
-.header {
-    background-color: #8D67F5;
-    color: #ffffff;
-    padding: 15px;
-    text-align: center;
-}
-.menu ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-.menu li {
-    padding: 8px;
-    margin-bottom: 7px;
-    background-color :#33b5e5;
-    color: #ffffff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-}
-.menu li:hover {
-    background-color: #0099cc;
-}
-.button {
-    width: 100%;
-    height: auto;  
-}
-.aside {
-    background-color: #33b5e5;
-    padding: 15px;
-    color: #ffffff;
-    text-align: center;
-    font-size: 14px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-}
-.footer {
-    background-color: #0099cc;
-    color: #ffffff;
-    text-align: center;
-    font-size: 12px;
-    padding: 15px;
-}
-input[type=submit]{
-    font-size:30px;
-    width:100%
-    #buttonLavabo{
-        background:url("../static/wp_setup.jpg") -0px -0px no-repeat;
-    }
-}
-
-</style>
+<link rel="stylesheet" type="text/css" href="static/style.css">
 </head>
 <body>
 
-<div class="col-1 col-s-1 buttonLeft" id="buttonLeft"><a href="#Previous"><img src="../static/arrow1_SmallL.png" border="0"></a></div>
-<div class="col-1 col-s-1 buttonRight" id="buttonRight"><a href="#Next"><img src="../static/arrow1_SmallR.png" border="0"></a></div>
-
 <div class="header">
-<h1>Artnet Light Controller - Salle de bain</h1>
+<h1>rDuino Compiler Uploader Server</h1>
 </div>
 
 <div class="row">
 <div class="col-3 col-s-3 menu" id="buttonList">
 <ul>
-    <a href="#Toilette" id="toilette"><li>Toilette</li></a>
-    <a href="#Douche" id="douche"><li>Douche</li></a>
-    <a href="#Bain" id="bain"><li>Bain</li></a>
-    <a href="#OFF" id="off"><li>Off</li></a>
+    <a href="#install_board" id="installBord"><li>Add a board to the compiler</li></a>
+    <a href="#install_library" id="installLibrary"><li>Add a library to the compiler</li></a>
 </ul>
 </div>
 
 <div class="col-6 col-s-9">
-<h1>Les couleurs</h1>
-<p>Quelle couleur pour obtenir quels effets ?
+<h1>The code</h1>
+{{ code }}
 
-S'il existe une symbolique arbitraire construite par les différentes cultures et civilisations, une signification réelle est intrinsèque aux couleurs, par les effets et mouvements de la nature, les phénomènes universels de la vie et le profond inconscient commun à toute l'espèce humaine.
-On distingue plusieurs catégories de couleurs selon leurs vertus.</p>
-<h2>Neutralisantes, nettoyantes et équilibrantes</h2>
-<p>
-<b><a href="#Vert" id="vert">Vert</a> :</b> a des vertus anti-allergiques et antibiotiques. Il représente l'indépendance, la nature, la liberté mais aussi la solitude et l'apprentissage.
-<b><a href="#Turquoise" id="turquoise">Turquoise</a> :</b> mobilise les cycles chronobiologiques. Il symbolise la transformation, l'évolution, l'élimination et la purification.</p>
-<h2>Cicatrisantes, protectrices et régénératrices</h2>
-<p>
-<b>Écarlate :</b> porte la fertilité, la féminité et l'enracinement, la terre. Ses vertus sont régénératrices et régulatrices.
-<b><a href="#Magenta" id="magenta">Magenta</a> :</b> représente la fusion, l'amour, le rêve mais également la vulnérabilité. On l'utilise comme rajeunissant et équilibrant cardiovasculaire, ou aphrodisiaque.
-<b><a href="#Violet" id="violet">Violet</a> :</b> est un immunostimulant, pour la circulation veineuse et contre les migraines. Il image l'esprit, la connaissance et la spiritualité.</p>
-<h2>Calmantes, dispersantes et sédatives</h2>
-<p>
-<b><a href="#BleuFonce" id="bleuFonce">Bleu foncé</a> :</b> représente la nuit, l'inconscient, la méditation et la profondeur. On le préconise comme somnifère et antibactérien, détuméfiant. Il participe de la synchronisation entre les deux hémisphères cérébraux.
-<b><a href="#BleuCiel" id="bleuCiel">Bleu ciel</a> :</b> symbolise le souffle, la communication, l'échange, le partage. Il est anti-inflammatoire et rafraîchissant.
-<b><a href="#Outremer" id="outremer">Outremer</a> :</b> est un inhibiteur et antistress. Il porte la tempérance, le calme et l'introspection.</p>
-<h2>Énergisantes et tonifiantes</h2>
-<p>
-<b><a href="#Rouge" id="rouge">Rouge</a> :</b> symbolise la chaleur, la vitalité, l'engagement et le courage. Il permet de tonifier et dynamiser par ses vertus anti-anémiques.
-<b><a href="#Orange" id="orange">Orange</a> :</b> est un excitant qui stimule l'adrénaline. Il caractérise les mouvements, les rythmes et symbolise l'émotion, le contact. On l'utilise en anti-dépresseur ou stimulant neurosensoriel.
-<b><a href="#Jaune" id="jaune">Jaune</a> :</b> représente le soleil, la conscience, la lucidité, le rayonnement personnel. On s'en sert comme stimulant digestif et lymphatique, pour l'estomac et les glandes exocrines.</p>
+<h1>The command</h1>
+{{ cmd }}
 
-</div>
+<h1>The result</h1>
+{{ result }}
 
-<div class="col-3 col-s-12">
-<div class="aside">
-<a href="#Vert" id="vert"><h2>Vert</h2></a>
-<p>Anti-allergiques et antibiotiques</p>
-<a href="#Turquoise" id="turquoise"><h2>Turquoise</h2></a>
-<p>Mobilise les cycles chronobiologiques</p>
-<a href="#Magenta" id="magenta"><h2>Magenta</h2></a>
-<p>Représente la fusion, l'amour, le rêve mais également la vulnérabilité
-<a href="#Violet" id="violet"><h2>Violet</h2></a>
-<p>Est un immunostimulant, pour la circulation veineuse et contre les migraines</p>
-<a href="#BleuFonce" id="BleuFonce"><h2>Bleu foncé</h2></a>
-<p>On le préconise comme somnifère et antibactérien, détuméfiant. Il participe de la synchronisation entre les deux hémisphères cérébraux</p>
-<a href="#BleuCiel" id="BleuCiel"><h2>Bleu ciel</h2></a>
-<p>Symbolise le souffle, la communication, l'échange, le partage. Il est anti-inflammatoire et rafraîchissant</p>
-<a href="#Outremer" id="outremer"><h2>Outremer</h2></a>
-<p>Inhibiteur et antistress. Il porte la tempérance, le calme et l'introspection.</p>
-<a href="#Rouge" id="rouge"><h2>Rouge</h2></a>
-<p>Il permet de tonifier et dynamiser par ses vertus anti-anémiques</p>
-<a href="#Orange" id="orange"><h2>Orange</h2></a>
-<p>On l'utilise en anti-dépresseur ou stimulant neurosensoriel</p>
-<a href="#Jaune" id="jaune"><h2>Jaune</h2></a>
-<p>On s'en sert comme stimulant digestif et lymphatique, pour l'estomac et les glandes exocrines</p>
-</div>
 </div>
 
 </div>
