@@ -17,8 +17,9 @@ from flask import Flask
 # Configuration data
 myPort = 888
 myArduinoExe = "arduino"
-myCompileAndUploadOption= "-upload"
-myTempDirectory = "/tmp"
+myCompileAndUploadOption = "-upload"
+myTarget = "/dev/ttyUSB0"
+myTempDirectory = "/tmp/"
 
 app = Flask(__name__)
 
@@ -29,10 +30,11 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
-        f = request.files['the_file']
-        f.save('/tmp/uploaded_file.txt')
+      theCode = "??"
+      f = request.files['the_file']
+      f.save(myTempDirectory + 'uploaded_file.txt')
         
-    return 'Hello World!'
+    return render_template('main.html', code=theCode)
         
 if __name__ == '__main__':
     app.run(port=myPort)
