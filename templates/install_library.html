@@ -10,14 +10,13 @@
 <div class="header">
 <h1>rDuino Compiler Uploader Server</h1>
 Install a new library in the Arduino compiler
-<h2>...WORK IN PROGRESS...</h2>
 </div>
 
 <div class="row">
 <div class="col-3 col-s-3 menu" id="buttonList">
 <ul>
-    <a href="{% url_for("/") %}" id="main"><li>Main page</li></a>
-    <a href="{% url_for("/install_board") %}" id="install_board"><li>Add a board to the compiler</li></a>
+    <a href="{{ url_for("main_page") }}" id="main"><li>Main page</li></a>
+    <a href="{{ url_for("install_board") }}" id="install_board"><li>Add a board to the compiler</li></a>
 </ul>
 </div>
 
@@ -27,17 +26,17 @@ Install a new library in the Arduino compiler
 <h1>The Library</h1>
 <div class="section">
 
-<form action={% url_for("install_library") %}>
+<form action={{ url_for("install_library") }} method="POST">
   Enter the name of the library to add to the compiler :<br>
   <input type="text" name="library" value=""><br>
-  <input type="submit" value="Submit">
+  <input type="submit" value="OK">
 </form>
 </div>
 
 
 <h1>The result of the last command</h1>
-<div class="section">{{ cmd }}:</p>{{ result }}</div>
-
+<div class="section_result">{{ cmd }}:</p>{{ result|safe }}</div>
+<div class="section_error">{{ error|safe }}</div>
 </div>
 
 </div>
