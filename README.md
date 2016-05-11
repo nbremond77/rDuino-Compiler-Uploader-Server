@@ -25,8 +25,8 @@ Here is a screen dump of an example of this process, with the "blink LED" exampl
    $ sudo ./run_server.py 
      * Running on http://127.0.0.1:888/ (Press CTRL+C to quit)
 
-   The code: 
-
+    The code: 
+    
     void setup() {
       pinMode(13, OUTPUT);
     }
@@ -38,6 +38,7 @@ Here is a screen dump of an example of this process, with the "blink LED" exampl
       delay(300);    }
     
     The shell command:
+    
     arduino --board arduino:avr:uno --port /dev/ttyUSB0  --upload /tmp/uploaded_file/uploaded_file.ino
     
     The output of the compiler-linker-uploader:
@@ -51,7 +52,7 @@ Here is a screen dump of an example of this process, with the "blink LED" exampl
     Les variables globales utilisent 9 octets (0%) de mémoire dynamique, ce qui laisse 2 039 octets pour les variables locales. Le maximum est de 2 048 octets.
     0
     
-     Done.
+    Done.
     
     127.0.0.1 - - [10/May/2016 23:03:59] "POST / HTTP/1.1" 200 -
 
