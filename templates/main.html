@@ -16,8 +16,8 @@ Send an HTTP request, including the code, to http://127.0.0.1:{{ thePort }}/ to 
 <div class="row">
 <div class="col-3 col-s-3 menu" id="buttonList">
 <ul>
-    <a href="#install_board" id="install_board"><li>Add a board to the compiler</li></a>
-    <a href="#install_library" id="install_library"><li>Add a library to the compiler</li></a>
+    <a href="{% url_for("/install_board") %}" id="install_board"><li>Add a board to the compiler</li></a>
+    <a href="{% url_for("/install_library") %}" id="install_library"><li>Add a library to the compiler</li></a>
 </ul>
 </div>
 
