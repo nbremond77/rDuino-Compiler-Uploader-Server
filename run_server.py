@@ -104,10 +104,10 @@ def set_board():
 # Main page, and process code compile and upload requests
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
-    theResult = ""
-    theCode = "??"
-    myCmd = ""
     if request.method == 'POST':
+        theResult = ""
+        theCode = ""
+        myCmd = ""
         myFileName = 'uploaded_file.ino'
         
         tmp = request.data
@@ -127,7 +127,7 @@ def upload_file():
         
         return theResult
     
-    return render_template('main.html', theBoardList=boardList, theBoard=myBoard, theTargetList=targetList, theTarget=myTarget, theTempFile=myTempDirectory+separator+myFileName)
+    return render_template('main.html', thePort=myPort, theBoardList=boardList, theBoard=myBoard, theTargetList=targetList, theTarget=myTarget, theTempFile=myTempDirectory+separator+myFileName, result=theResult)
 
 if __name__ == '__main__':
 
