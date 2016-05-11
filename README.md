@@ -22,9 +22,9 @@ The server get the code, prepare a shell command, and run it in order to have th
 
 Here is a screen dump of an example of this process, with the "blink LED" example of Blockly@rDuino:
 
-   $ sudo ./run_server.py 
-     * Running on http://127.0.0.1:888/ (Press CTRL+C to quit)
-
+    $ sudo ./run_server.py 
+    * Running on http://127.0.0.1:888/ (Press CTRL+C to quit)
+    
     The code: 
     
     void setup() {
@@ -42,6 +42,7 @@ Here is a screen dump of an example of this process, with the "blink LED" exampl
     arduino --board arduino:avr:uno --port /dev/ttyUSB0  --upload /tmp/uploaded_file/uploaded_file.ino
     
     The output of the compiler-linker-uploader:
+    
     Picked up JAVA_TOOL_OPTIONS: 
     Loading configuration...
     Initialisation des paquets...
@@ -55,6 +56,7 @@ Here is a screen dump of an example of this process, with the "blink LED" exampl
     Done.
     
     127.0.0.1 - - [10/May/2016 23:03:59] "POST / HTTP/1.1" 200 -
+
 
 
 
