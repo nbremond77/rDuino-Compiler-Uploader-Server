@@ -33,11 +33,14 @@ myInstallLibrary = "--install-library"
 myInstallBoard = "--install-boards"
 
 myBoardOptions = "--board"
+boardList = [ "arduino:avr:uno",  "arduino:avr:mega"]
 #myBoard = "arduino:avr:nano:cpu=atmega168"
 #myBoard = "arduino:avr:mega"
 myBoard = "arduino:avr:uno"
 
 myTargetOption = "--port"
+#targetList = ["COM1","COM2","COM3","COM4","COM5","COM6"]
+targetList = ["/dev/ttyUSB0", "/dev/ttyUSB1", "/dev/ttyUSB2", "/dev/ttyUSB3", "/dev/ttyACM0", "/dev/ttyACM1", "/dev/ttyACM2", "/dev/ttyACM3"]
 #myTarget = "COM3"
 myTarget = "/dev/ttyUSB0"
 #myTarget = "/dev/ttyACM0"
@@ -52,6 +55,8 @@ myTempDirectory = "/tmp/uploaded_file"
 app = Flask(__name__)
 
 # Define the routes
+
+# Install a new library in the Arduino IDE
 @app.route('/install_library', methods=['GET', 'POST'])
 def install_library():
     myCmd = ""
@@ -66,6 +71,7 @@ def install_library():
     return render_template('install_library.html', cmd=myCmd, result=theResult)
 
 
+# Install a new baord in the Arduino IDE
 @app.route('/install_boards', methods=['GET', 'POST'])
 def install_boards():
     myCmd = ""
@@ -79,7 +85,23 @@ def install_boards():
         print(" Done. Result:%s\n" % theResult)
     return render_template('install_boards.html', cmd=myCmd, result=theResult)
 
-
+# Define the target address
+@app.route('/set_target', methods=['GET', 'POST'])
+def set_target():
+    if request.method == 'POST':
+        myTarget = request.form['taget']
+        print("Taget set to:%s\n" % myTarget)
+    return redirect('/')
+    
+# Define the board
+@app.route('/set_board', methods=['GET', 'POST'])
+def set_board():
+    if request.method == 'POST':
+        myBoard = request.form['board']
+        print("Board set to:%s\n" % myBoard)
+    return redirect('/')
+    
+# Main page, and process code compile and upload requests
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
     theResult = ""
@@ -90,27 +112,28 @@ def upload_file():
         
         tmp = request.data
         theCode = tmp.decode(encoding='UTF-8')
-
+        print("\nThe code:\n%s\n" % theCode)
         
+        # Write the code to a temp file
         with open(myTempDirectory + separator + myFileName, "w") as f:
             f.write("%s" % theCode)
     
-        print("%s\n" % theCode)
-     
         myCmd = myArduinoExe+" "+myBoardOptions+" "+myBoard+" "+myTargetOption+" "+myTarget+" "+myOtherOptions+" "+myCompileAndUploadOption+" "+myTempDirectory+separator+myFileName
-        print("%s\n" % myCmd)
-        theResult = os.system(myCmd)
-        print("%s\n" % theResult)
-        print(" Done.\n")
-    
-    return render_template('main.html', code=theCode, result=theResult, cmd=myCmd)
-#    return render_template('main.html')
-#    return "hello"
+        print("\nThe shell command:\n%s\n" % myCmd)
 
-# Start the main server
+        theResult = os.system(myCmd)
+        print("\nThe output of the compiler-linker-uploader:\n%s\n" % theResult)
+        print(" Done.\n")
+        
+        return theResult
+    
+    return render_template('main.html', theBoardList=boardList, theBoard=myBoard, theTargetList=targetList, theTarget=myTarget, theTempFile=myTempDirectory+separator+myFileName)
+
 if __name__ == '__main__':
 
+    # Create the temp file directory if needed
     if not(os.path.isdir(myTempDirectory)):
         os.system("mkdir "+myTempDirectory)
         
+    # Start the main server
     app.run(port=myPort)
