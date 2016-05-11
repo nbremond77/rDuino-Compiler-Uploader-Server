@@ -51,6 +51,10 @@ myOtherOptions = ""
 separator = "/"  # Linux
 myTempDirectory = "/tmp/uploaded_file"
 
+myCmd = ""
+theResult = ""
+
+
 # Define the main application
 app = Flask(__name__)
 
@@ -59,10 +63,10 @@ app = Flask(__name__)
 # Install a new library in the Arduino IDE
 @app.route('/install_library', methods=['GET', 'POST'])
 def install_library():
-    myCmd = ""
-    theResult = ""
      # arduino --install-library "Bridge:1.0.0"
     if request.method == 'POST':
+        myCmd = ""
+        theResult = ""
         theLibrary = request.form['library']
         myCmd = myArduinoExe+" "+myInstallLibrary+" "+theLibrary
         print("%s ..." % myCmd)
@@ -74,16 +78,16 @@ def install_library():
 # Install a new baord in the Arduino IDE
 @app.route('/install_boards', methods=['GET', 'POST'])
 def install_boards():
-    myCmd = ""
-    theResult = ""
      # arduino --install-boards "arduino:sam"
     if request.method == 'POST':
+        myCmd = ""
+        theResult = ""
         theBoard = request.form['board']
         myCmd = myArduinoExe+" "+myInstallBoard+" "+theBoard
         print("%s ..." % myCmd)
         #theResult = os.system(myCmd)
         print(" Done. Result:%s\n" % theResult)
-    return render_template('install_boards.html', cmd=myCmd, result=theResult)
+    return render_template('install_boards.html',  theBoardList=boardList, cmd=myCmd, result=theResult)
 
 # Define the target address
 @app.route('/set_target', methods=['GET', 'POST'])
