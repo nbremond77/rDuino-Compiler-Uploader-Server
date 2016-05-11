@@ -19,15 +19,19 @@
 </ul>
 </div>
 
+<!--    return render_template('main.html', theBoardList=boardList, theBoard=myBoard, theTargetList=targetList, theTarget=myTarget, theTempFile=myTempDirectory+separator+myFileName) -->
+
 <div class="col-6 col-s-9">
-<h1>The code</h1>
-{{ code }}
+<h1>The board</h1>
+{{ theBoardList }}
+{{ theBoard }}
 
-<h1>The command</h1>
-{{ cmd }}
+<h1>The target port</h1>
+{{ theTargetList }}
+{{ theTarget }}
 
-<h1>The result</h1>
-{{ result }}
+<h1>The temp file</h1>
+{{ theTempFile }}
 
 </div>
 
