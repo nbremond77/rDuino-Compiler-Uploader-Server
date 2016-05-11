@@ -9,13 +9,14 @@
 
 <div class="header">
 <h1>rDuino Compiler Uploader Server</h1>
+Send an HTTP request, including the code, to http://127.0.0.1:{{ thePort }}/ to compile and upload a code to the Arduino target.
 </div>
 
 <div class="row">
 <div class="col-3 col-s-3 menu" id="buttonList">
 <ul>
-    <a href="#install_board" id="installBord"><li>Add a board to the compiler</li></a>
-    <a href="#install_library" id="installLibrary"><li>Add a library to the compiler</li></a>
+    <a href="#install_board" id="install_board"><li>Add a board to the compiler</li></a>
+    <a href="#install_library" id="install_library"><li>Add a library to the compiler</li></a>
 </ul>
 </div>
 
@@ -25,14 +26,27 @@
 
 <div class="col-6 col-s-9">
 <h1>The board</h1>
-{{ theBoardList }}
-{{ theBoard }}
+Available boards:
+<form action="set_board" method="POST">
+<select name="board" id="board" onchange="this.form.submit()">
+  {% for board in theBoardList %}
+    <option value="{{board}}">{{board}}</option>
+  {% endfor %}  
+</select>
+</form>
+The selected board type : {{ theBoard }}
 
 <h1>The target port</h1>
-{{ theTargetList }}
-{{ theTarget }}
+<form action="set_target" method="POST">
+<select name="target" id="target" onchange="this.form.submit()">
+  {% for target in theTargetList %}
+    <option value="{{target}}">{{target}}</option>
+  {% endfor %}  
+</select>
+</form>
+The selected port to communicate with the target : {{ theTarget }}
 
-<h1>The temp file</h1>
+<h1>The temporary file containg the code</h1>
 {{ theTempFile }}
 
 </div>
