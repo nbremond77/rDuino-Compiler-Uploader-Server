@@ -2,7 +2,7 @@
 
 Description
 -----------
-This small web server, intented to run locally, receives pieces of Arduino code on port 888, compile it and upload the binary to the target.
+This small web server (a webapp), intented to run locally, receives pieces of Arduino code on port 888, compile it and upload the binary to the target.
 This server has been developped to close the gap between Blockly@rduino and the real Arduino target, when CodeBender.cc is not available, or can not be used.
 
 Usage
