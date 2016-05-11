@@ -70,7 +70,7 @@ def install_library():
         theLibrary = request.form['library']
         myCmd = myArduinoExe+" "+myInstallLibrary+" "+theLibrary
         print("%s ..." % myCmd)
-        #theResult = os.system(myCmd)
+        theResult = os.system(myCmd)
         print(" Done. Result:%s\n" % theResult)
     return render_template('install_library.html', cmd=myCmd, result=theResult)
 
@@ -85,7 +85,7 @@ def install_board():
         theBoard = request.form['board']
         myCmd = myArduinoExe+" "+myInstallBoard+" "+theBoard
         print("%s ..." % myCmd)
-        #theResult = os.system(myCmd)
+        theResult = os.system(myCmd)
         print(" Done. Result:%s\n" % theResult)
     return render_template('install_board.html',  theBoardList=boardList, cmd=myCmd, result=theResult)
 
