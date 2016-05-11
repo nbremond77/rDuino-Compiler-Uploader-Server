@@ -3,20 +3,30 @@
 Description
 -----------
 This small web server, intented to run locally, receives pieces of Arduino code on port 888, compile it and upload the binary to the target.
-This server has been developped to close the bridge between Blockly@rduino and the real Arduino target, when CodeBender.cc is not available, or can not be used.
+This server has been developped to close the gap between Blockly@rduino and the real Arduino target, when CodeBender.cc is not available, or can not be used.
 
 Usage
 -----
-Run the server on the 
-Server sur port 888
-A exécuter en root
-Qui va compiler et uploader le code vers la cible lorqu'on clique sur "Paste to arduino IDE" dans Blockly@rduino
+Run the server on the local machine, using python, as root.
 
-Voici ce qui s'affiche lorsqu'on fait un test avec le code "blink":
+    sudo ./run_server.py
 
-    [nbremond@multimedia rDuino-Compiler-Uploader-Server]$ sudo ./run_server.py 
+Build your code in Blockly@reduino
+When ready, click on the button:
+"`Paste to arduino IDE`"
+
+At this time, an HTTP request with the code is sent to 
+http://127.0.0.1:888/
+
+The server get the code, prepare a shell command, and run it in order to have the code compiled, linked and uploaded to the target.
+
+Here is a screen dump of an example of this process, with the "blink LED" example of Blockly@rDuino:
+
+   $ sudo ./run_server.py 
      * Running on http://127.0.0.1:888/ (Press CTRL+C to quit)
-     
+
+   The code: 
+
     void setup() {
       pinMode(13, OUTPUT);
     }
@@ -25,12 +35,12 @@ Voici ce qui s'affiche lorsqu'on fait un test avec le code "blink":
       digitalWrite(13, HIGH);
       delay(100);
       digitalWrite(13, LOW);
-      delay(300);
+      delay(300);    }
     
-    }
-    
+    The shell command:
     arduino --board arduino:avr:uno --port /dev/ttyUSB0  --upload /tmp/uploaded_file/uploaded_file.ino
     
+    The output of the compiler-linker-uploader:
     Picked up JAVA_TOOL_OPTIONS: 
     Loading configuration...
     Initialisation des paquets...
