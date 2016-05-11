@@ -76,8 +76,8 @@ def install_library():
 
 
 # Install a new baord in the Arduino IDE
-@app.route('/install_boards', methods=['GET', 'POST'])
-def install_boards():
+@app.route('/install_board', methods=['GET', 'POST'])
+def install_board():
      # arduino --install-boards "arduino:sam"
     if request.method == 'POST':
         myCmd = ""
@@ -87,7 +87,7 @@ def install_boards():
         print("%s ..." % myCmd)
         #theResult = os.system(myCmd)
         print(" Done. Result:%s\n" % theResult)
-    return render_template('install_boards.html',  theBoardList=boardList, cmd=myCmd, result=theResult)
+    return render_template('install_board.html',  theBoardList=boardList, cmd=myCmd, result=theResult)
 
 # Define the target address
 @app.route('/set_target', methods=['GET', 'POST'])
