@@ -10,6 +10,7 @@
 <div class="header">
 <h1>rDuino Compiler Uploader Server</h1>
 Send an HTTP request, including the code, to http://127.0.0.1:{{ thePort }}/ to compile and upload a code to the Arduino target.
+<h2>...WORK IN PROGRESS...</h2>
 </div>
 
 <div class="row">
@@ -22,10 +23,9 @@ Send an HTTP request, including the code, to http://127.0.0.1:{{ thePort }}/ to 
 
 <!--    return render_template('main.html', theBoardList=boardList, theBoard=myBoard, theTargetList=targetList, theTarget=myTarget, theTempFile=myTempDirectory+separator+myFileName) -->
 
-<h1>WORK IN PROGRESS...</h1>
-
 <div class="col-6 col-s-9">
 <h1>The board</h1>
+<div class="section">
 Available boards:
 <form action="set_board" method="POST">
 <select name="board" id="board" onchange="this.form.submit()">
@@ -35,8 +35,10 @@ Available boards:
 </select>
 </form>
 The selected board type : {{ theBoard }}
+</div>
 
 <h1>The target port</h1>
+<div class="section">
 <form action="set_target" method="POST">
 <select name="target" id="target" onchange="this.form.submit()">
   {% for target in theTargetList %}
@@ -45,9 +47,13 @@ The selected board type : {{ theBoard }}
 </select>
 </form>
 The selected port to communicate with the target : {{ theTarget }}
+</div>
 
 <h1>The temporary file containg the code</h1>
-{{ theTempFile }}
+<div class="section">{{ theTempFile }}</div>
+
+<h1>The result of the last command</h1>
+<div class="section">{{ result }}</div>
 
 </div>
 
