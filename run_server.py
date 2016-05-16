@@ -21,8 +21,9 @@ import subprocess
 from flask import Flask, abort, redirect, url_for, request, render_template,  Markup,  make_response,  session,  escape
 
 # Configuration data
-myPort = 888
+#myPort = 888
 #myPort = 5000
+myPort = 1020
 
 #myArduinoExe = "arduino_debug.exe" # Windows
 #myArduinoExe = "Arduino.app/Contents/MacOS/Arduino" # MAC
