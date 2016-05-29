@@ -16,14 +16,16 @@
 
 import os
 import subprocess
+from datetime import datetime, date, time
 
  # from http://flask.pocoo.org/ 
-from flask import Flask, abort, redirect, url_for, request, render_template,  Markup,  make_response,  session,  escape
+from flask import Flask, abort, redirect, url_for, request, render_template,  Markup,  make_response,  session,  escape,  jsonify
 
 # Configuration data
 #myPort = 888
 #myPort = 5000
-myPort = 1020
+myPort = 5005
+#myPort = 1020
 
 #myArduinoExe = "arduino_debug.exe" # Windows
 #myArduinoExe = "Arduino.app/Contents/MacOS/Arduino" # MAC
@@ -59,6 +61,7 @@ myTempDirectory = "/tmp/uploaded_file"
 myCmd = ""
 theResult = ""
 theError = ""
+compileTime = datetime.now()
 myFileName = "uploaded_file.ino"
 
 
@@ -146,6 +149,22 @@ def set_option():
         myOption = request.form['option']
         print("Option set to:[%s]\n" % myOption)
     return redirect('/')
+
+@app.route('/get_result')
+def get_result():
+    global theResult
+    global compileTime
+    theTime = datetime.now()
+#    print("result: %s\n" % theTime.strftime("%A %d %B %Y %H:%M:%S") + theResult)
+#    print("compile time : %s\n" % compileTime.strftime("%A %d %B %Y %H:%M:%S"))
+    return jsonify(date=theTime.strftime("%A %d %B %Y %H:%M:%S"),  compileTime =  compileTime.strftime("%A %d %B %Y %H:%M:%S"), result=theResult)
+#    return time.strftime("%A %d %B %Y %H:%M:%S") + theResult
+
+@app.route('/get_error')
+def get_error():
+    global theError
+    return jsonify(error = theError)
+#    return theError
     
 # Main page, and process code compile and upload requests
 @app.route('/', methods=['GET', 'POST'])
@@ -154,6 +173,7 @@ def main_page():
     global theError
     global myCmd
     global myFileName
+    global compileTime
     
     if request.method == 'POST':
 
@@ -172,6 +192,7 @@ def main_page():
             f.write("%s" % theCode)
     
         # arduino --board arduino:avr:nano:cpu=atmega168 --port /dev/ttyACM0 --upload /path/to/sketch/sketch.ino
+        compileTime = datetime.now()
         myCmd = myArduinoExe+" "+myBoardOptions+" "+myBoard+" "+myTargetOption+" "+myTargetRoot+myTarget+" "+myOption+" "+myCompileAndUploadOption+" "+myTempDirectory+separator+myFileName
         print("\nThe shell command:\n%s\n" % myCmd)
 
@@ -179,9 +200,11 @@ def main_page():
         proc = subprocess.Popen(myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         (out, err) = proc.communicate()
         result = out.decode(encoding='UTF-8')
+#        theResult = result
         theResult = result.replace("\n","<br/>")
         error = err.decode(encoding='UTF-8')
         theError = error.replace("\n","<br/>")
+#        theError = error
         
         print("\nThe output of the compiler-linker-uploader:\n%s\n" % result)
         print("\nThe errors :\n%s\n" % error)
@@ -191,6 +214,8 @@ def main_page():
 #        return redirect('/')        
     
     return render_template('main.html', thePort=myPort, theBoardList=boardList, theBoard=myBoard, theTargetList=targetList, theTarget=myTarget, theOptionList=myOptionList, theOption=myOption, theTempFile=myTempDirectory+separator+myFileName, result=theResult, error=theError)
+
+
 
 if __name__ == '__main__':
 

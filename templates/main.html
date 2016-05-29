@@ -4,6 +4,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="UTF-8">
 <link rel="stylesheet" type="text/css" href="static/style.css">
+
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+  
+<script type=text/javascript>
+var timer1 = null
+var timer2 = null
+
+function updateResult() {
+  $.getJSON('/get_result', function(data) {
+//        $("#section_result").text("toto " + data.result);
+        document.getElementById('section_result').innerHTML = "Date : " + data.date + "<br/>Heure de la dernière exécution : " + data.compileTime +  "<br/><br/>Resultat : " + data.result.replace("\n","<br/>");
+  });
+}
+function updateError() {
+  $.getJSON('/get_error', function(data){
+        $("#section_error").text("Message d'erreur : " + data.error.replace("\n","<br/>"));
+  })
+}
+  
+timer1 = setInterval('updateResult()', 1000 * 1);
+timer2 = setInterval('updateError()', 1000 * 1);
+</script>
+
 </head>
 <body>
 
@@ -77,8 +100,8 @@ The selected options : {{ theOption }}
 <div class="section">{{ theTempFile }}</div>
 
 <h1>The result of the last command</h1>
-<div class="section_result">{{ result|safe }}</div>
-<div class="section_error">{{ error|safe }}</div>
+<div class="section_result"><span id=section_result>{{ result|safe }}</span></div>
+<div class="section_error"><span id=section_error>{{ error|safe }}</span></div>
 </div>
 
 </div>
