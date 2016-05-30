@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-5.1.dtd">
 <!-- eric project file for project rDuino_Compiler_Uploader_Server -->
-<!-- Saved: 2016-05-10, 21:46:15 -->
+<!-- Saved: 2016-05-29, 23:11:03 -->
 <!-- Copyright (C) 2016 Bernard Rémond, nbremond@laposte.net -->
 <Project version="5.1">
   <Language>en_US</Language>
@@ -21,6 +21,8 @@
   <Translations/>
   <Resources>
     <Resource>static/style.css</Resource>
+    <Resource>templates/install_board.html</Resource>
+    <Resource>templates/install_library.html</Resource>
     <Resource>templates/main.html</Resource>
   </Resources>
   <Interfaces/>

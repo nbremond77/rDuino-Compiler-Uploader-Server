@@ -14,12 +14,30 @@ var timer2 = null
 function updateResult() {
   $.getJSON('/get_result', function(data) {
 //        $("#section_result").text("toto " + data.result);
-        document.getElementById('section_result').innerHTML = "Date : " + data.date + "<br/>Heure de la dernière exécution : " + data.compileTime +  "<br/><br/>Resultat : " + data.result.replace("\n","<br/>");
-  });
+        document.getElementById('section_result').innerHTML = "Date : " + data.date + "<br/>Heure de la dernière exécution : " + data.compileTime +  "<br/><br/>Resultat : " + data.result;
+        
+        //document.getElementById('section_indicator').innerHTML = data.returnCode;
+        
+        if (data.returnCode <= -1) {
+            document.body.style.backgroundColor = '#CC3300';
+            document.getElementById("section_indicator").style.backgroundColor = "red";
+        }
+        else {
+            if (data.returnCode >= 1) {
+                document.body.style.backgroundColor = '#336600';
+                document.getElementById("section_indicator").style.backgroundColor = "green";
+            }
+            else {
+                document.body.style.backgroundColor = 'gray';
+                document.getElementById("section_indicator").style.backgroundColor = "black";
+            }
+        }
+    });
 }
 function updateError() {
   $.getJSON('/get_error', function(data){
-        $("#section_error").text("Message d'erreur : " + data.error.replace("\n","<br/>"));
+        document.getElementById('section_error').innerHTML = "Message d'erreur : " + data.error
+//        $("#section_error").text("Message d'erreur :<br/><br/> " + data.error);
   })
 }
   
@@ -36,12 +54,15 @@ Send an HTTP request, including the code, to http://127.0.0.1:{{ thePort }}/ to 
 </div>
 
 <div class="row">
+
+<!--  NO MENU
 <div class="col-3 col-s-3 menu" id="buttonList">
 <ul>
     <a href="{{ url_for("install_board") }}" id="install_board"><li>Add a board to the compiler</li></a>
     <a href="{{ url_for("install_library") }}" id="install_library"><li>Add a library to the compiler</li></a>
 </ul>
 </div>
+-->
 
 <!--    return render_template('main.html', theBoardList=boardList, theBoard=myBoard, theTargetList=targetList, theTarget=myTarget, theTempFile=myTempDirectory+separator+myFileName) -->
 
@@ -102,6 +123,7 @@ The selected options : {{ theOption }}
 <h1>The result of the last command</h1>
 <div class="section_result"><span id=section_result>{{ result|safe }}</span></div>
 <div class="section_error"><span id=section_error>{{ error|safe }}</span></div>
+<div class="section_indicator" id=section_indicator></div>
 </div>
 
 </div>
