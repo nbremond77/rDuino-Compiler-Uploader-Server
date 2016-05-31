@@ -29,7 +29,7 @@ myPort = 5005
 
 #myArduinoExe = "arduino_debug.exe" # Windows
 #myArduinoExe = "Arduino.app/Contents/MacOS/Arduino" # MAC
-myArduinoExe = "arduino" # Linux
+myArduinoExe = "export DISPLAY=:0.0 && arduino " # Linux
 
 myCompileAndUploadOption = "--upload"
 myVerify = "--verify"
@@ -266,6 +266,7 @@ def main_page():
         #(out, err) = myProc.communicate()
         
         # Non blocking
+	theResult = myCmd + "<br/><br/>"
             
         if myProc:
             for line in myProc.stdout:
