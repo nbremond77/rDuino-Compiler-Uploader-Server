@@ -254,10 +254,10 @@ def main_page():
         print("Try to save the code to a local file %s\n" % theFileName)
 
         # Write the code to a temp file
-	try:
-	    f = open(theFileName, "w")
+        try:
+            f = open(theFileName, "w")
             print("Trying...\n")
-	except IOError, err:
+        except err:
             print("Unable to open file for writing: IOError: %s\n" % err)
         else:
             try:
@@ -285,7 +285,7 @@ def main_page():
         #(out, err) = myProc.communicate()
         
         # Non blocking
-	theResult = myCmd + "<br/><br/>"
+        theResult = myCmd + "<br/><br/>"
             
         if myProc:
             for line in myProc.stdout:
