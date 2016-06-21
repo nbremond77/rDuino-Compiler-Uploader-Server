@@ -56,8 +56,9 @@ myOption = ""
 
 #separator = "\"  # Windows
 separator = "/"  # Linux
-#myTempDirectory = "/tmp/uploaded_file"
-myTempDirectory = "/home/admin"
+myTempDirectory = "/tmp/uploaded_file"
+#myTempDirectory = "/tmp"
+#myTempDirectory = "/home/admin"
 #myTempDirectory = "~"
 
 myCmd = ""
