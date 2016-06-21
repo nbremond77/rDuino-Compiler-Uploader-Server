@@ -18,7 +18,7 @@ import os
 import subprocess
 from datetime import datetime, date, time
 
- # from http://flask.pocoo.org/ 
+# from http://flask.pocoo.org/ 
 from flask import Flask, abort, redirect, url_for, request, render_template,  Markup,  make_response,  session,  escape,  jsonify
 
 # Configuration data
@@ -29,7 +29,7 @@ myPort = 5005
 
 #myArduinoExe = "arduino_debug.exe" # Windows
 #myArduinoExe = "Arduino.app/Contents/MacOS/Arduino" # MAC
-myArduinoExe = "arduino" # Linux
+myArduinoExe = "export DISPLAY=:0.0 && arduino " # Linux
 
 myCompileAndUploadOption = "--upload"
 myVerify = "--verify"
@@ -56,7 +56,9 @@ myOption = ""
 
 #separator = "\"  # Windows
 separator = "/"  # Linux
-myTempDirectory = "/tmp/uploaded_file"
+#myTempDirectory = "/tmp/uploaded_file"
+myTempDirectory = "/home/admin"
+#myTempDirectory = "~"
 
 myCmd = ""
 theResult = ""
@@ -243,16 +245,33 @@ def main_page():
         theReturnCode = 0
         theCode = ""
         myCmd = ""
-        myFileName = 'uploaded_file.ino'
+        myFileName = "uploaded_file.ino"
         
         tmp = request.data
         theCode = tmp.decode(encoding='UTF-8')
-        print("\nThe code:\n%s\n" % theCode)
-        
+        theFileName = myTempDirectory + separator + myFileName
+        print("The code:\n%s\n" % theCode)
+        print("Try to save the code to a local file %s\n" % theFileName)
+
         # Write the code to a temp file
-        with open(myTempDirectory + separator + myFileName, "w") as f:
-            f.write("%s" % theCode)
-    
+	try:
+	    f = open(theFileName, "w")
+            print("Trying...\n")
+	except IOError, err:
+            print("Unable to open file for writing: IOError: %s\n" % err)
+        else:
+            try:
+                print("Writing...\n")
+                f.write(theCode)
+                print("Code written to %s\n" % theFileName)
+#            except IOError, err:
+            except err:
+                print("Unable to write in the file : %s\n" % err)
+            finally:
+                f.close()
+                print("File closed.\n")
+
+
         # arduino --board arduino:avr:nano:cpu=atmega168 --port /dev/ttyACM0 --upload /path/to/sketch/sketch.ino
         compileTime = datetime.now()
         myCmd = myArduinoExe+" "+myBoardOptions+" "+myBoard+" "+myTargetOption+" "+myTargetRoot+myTarget+" "+myOption+" "+myCompileAndUploadOption+" "+myTempDirectory+separator+myFileName
@@ -266,6 +285,7 @@ def main_page():
         #(out, err) = myProc.communicate()
         
         # Non blocking
+	theResult = myCmd + "<br/><br/>"
             
         if myProc:
             for line in myProc.stdout:
