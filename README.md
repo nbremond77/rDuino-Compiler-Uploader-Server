@@ -2,21 +2,21 @@
 
 Description
 -----------
-This small web server (a webapp), intented to run locally, receives pieces of Arduino code on port 888, compile it and upload the binary to the target.
+This small web server (a webapp), intented to run locally, receives pieces of Arduino code on port 5005, compile it and upload the binary to the target.
 This server has been developped to close the gap between Blockly@rduino and the real Arduino target, when CodeBender.cc is not available, or can not be used.
 
 Usage
 -----
 Run the server on the local machine, using python, as root.
 
-    sudo ./run_server.py
+    ./run_server.py
 
 Build your code in Blockly@reduino
 When ready, click on the button:
 "`Paste to arduino IDE`"
 
 At this time, an HTTP request with the code is sent to 
-http://127.0.0.1:888/
+http://127.0.0.1:5005/
 
 The server get the code, prepare a shell command, and run it in order to have the code compiled, linked and uploaded to the target.
 
