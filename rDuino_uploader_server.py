@@ -225,10 +225,101 @@ def get_error():
             
     return jsonify(error = theError,  returnCode=theReturnCode)
 #    return theError
+
+
+# Open the code in the Arduino IDE
+@app.route('/openIDE', methods=['GET', 'POST'])
+def openIDE():
+    global theResult
+    global theError
+    global theReturnCode
+    global myCmd
+    global myFileName
+    global compileTime
+    global myProc
+    
+    if request.method == 'POST':
+
+        theResult = ""
+        theError = ""
+        theReturnCode = 0
+        theCode = ""
+        myCmd = ""
+        myFileName = "uploaded_file.ino"
+        
+        tmp = request.data
+#        theCode = tmp.decode(encoding='UTF-8')
+        theCode = tmp
+        theFileName = myTempDirectory + separator + myFileName
+        print("The code:\n%s\n" % theCode)
+        print("Try to save the code to a local file %s\n" % theFileName)
+
+        # Write the code to a temp file
+        try:
+            f = open(theFileName, "w")
+            print("Trying...\n")
+#        except (OSError, IOError) as err:
+        except:
+            print("Unable to open file for writing: IOError: %s\n" % sys.exc_info()[0])
+        else:
+            try:
+                print("Writing...\n")
+                f.write(theCode)
+                print("Code written to %s\n" % theFileName)
+#            except  (OSError, IOError) as err:
+            except:
+                print("Unable to write in the file : %s\n" % sys.exc_info()[0])
+            finally:
+                f.close()
+                print("File closed.\n")
+
+
+        # arduino --board arduino:avr:nano:cpu=atmega168 --port /dev/ttyACM0 --upload /path/to/sketch/sketch.ino
+        compileTime = datetime.now()
+        myCmd = myArduinoExe+" "+myBoardOptions+" "+myBoard+" "+myTargetOption+" "+myTarget+" "+myOption+" "+myTempDirectory+separator+myFileName
+        print("\nThe shell command:\n%s\n" % myCmd)
+
+#        theResult = os.system(myCmd)
+        myProc = subprocess.Popen(myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+#        myProc = subprocess.Popen(myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        
+        # Subprocess blocking
+        #(out, err) = myProc.communicate()
+        
+        # Non blocking
+        theResult = myCmd + "<br/><br/>"
+            
+        if myProc:
+            for line in myProc.stdout:
+                #out = str(line.rstrip())
+                result = line.decode('utf-8')
+                theResult = theResult + result.replace("\n","<br/>")
+            print("-- Result:[%s]\n" % theResult)
+            #myProc.stdout.flush()
+            for line in myProc.stderr:
+                #err = str(line.rstrip())
+                error = line.decode('utf-8')
+                theError = theError + error.replace("\n","<br/>")
+            print("-- Error:[%s]\n" % theError)
+            #myProc.stderr.flush()  
+            
+#        result = out.decode(encoding='UTF-8')
+#        theResult = result.replace("\n","<br/>")
+#        error = err.decode(encoding='UTF-8')
+#        theError = error.replace("\n","<br/>")
+
+        print("\nThe output of the compiler-linker-uploader:\n%s\n" % theError)
+        print("\nThe errors :\n%s\n" % theError)
+        print("\nThe Return Code :\n%s\n" % theReturnCode)
+        print(" Done.\n")
+    
+    return render_template('main.html', thePort=myPort, theBoardList=boardList, theBoard=myBoard, theTargetList=targetList, theTarget=myTarget, theOptionList=myOptionList, theOption=myOption, theTempFile=myTempDirectory+separator+myFileName, result=theResult, error=theError)
+
+
     
 # Main page, and process code compile and upload requests
-@app.route('/', methods=['GET', 'POST'])
-def main_page():
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
     global theResult
     global theError
     global theReturnCode
@@ -315,6 +406,20 @@ def main_page():
     return render_template('main.html', thePort=myPort, theBoardList=boardList, theBoard=myBoard, theTargetList=targetList, theTarget=myTarget, theOptionList=myOptionList, theOption=myOption, theTempFile=myTempDirectory+separator+myFileName, result=theResult, error=theError)
 
 
+# Main page, and process code compile and upload requests
+@app.route('/', methods=['GET', 'POST'])
+def main_page():
+    global theResult
+    global theError
+    global theReturnCode
+    global myCmd
+    global myFileName
+    global compileTime
+    global myProc
+    
+    return render_template('main.html', thePort=myPort, theBoardList=boardList, theBoard=myBoard, theTargetList=targetList, theTarget=myTarget, theOptionList=myOptionList, theOption=myOption, theTempFile=myTempDirectory+separator+myFileName, result=theResult, error=theError)
+    
+    
 def flaskrun(app, default_host="127.0.0.1", 
                   default_port=myPort):
     """

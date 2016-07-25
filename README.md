@@ -57,6 +57,23 @@ Here is a screen dump of an example of this process, with the "blink LED" exampl
     
     127.0.0.1 - - [10/May/2016 23:03:59] "POST / HTTP/1.1" 200 -
 
+The services provided by this server are the following:
+
+    - 127.0.0.1/set_target : Set the USB port
+
+    - 127.0.0.1/set_board : set the type of Arduino board
+
+    - 127.0.0.1/set_option : Set the Verbose options
+
+    - 127.0.0.1/upload : To compile and upload te code into the Arduino board
+
+    - 127.0.0.1/get_result : To get the result of the compile and upload phases
+
+    - 127.0.0.1/get_error : To get the errors
+
+    - 127.0.01/openIDE : To open the code in the Arduino IDE
+
+    - 127.0.0.1/ : To display the main page
 
 
 Options
