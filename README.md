@@ -62,30 +62,32 @@ Here is a screen dump of an example of this process, with the "blink LED" exampl
 Options
 -------
 rDuino_uploader_server can be run with the following options:
-$ ./rDuino_uploader_server.py  --help
-Usage: rDuino_uploader_server.py [options]
 
-Options:
-  -h, --help            show this help message and exit
-  -H HOST, --host=HOST  Hostname of the rDuino_Uploader_Server app [default
-                        127.0.0.1]
-  -P PORT, --port=PORT  Ethernet port for the rDuino_Uploader_Server app
-                        [default 5005]
-  -D DEVICE, --device=DEVICE
-                        Address of the target to be programmed :
-                        '/dev/ttyUSB0', '/dev/ttyUSB1', '/dev/ttyUSB2',
-                        '/dev/ttyUSB3', '/dev/ttyACM0', '/dev/ttyACM1',
-                        '/dev/ttyACM2', '/dev/ttyACM3'[default /dev/ttyUSB0]
-  -B BOARD, --board=BOARD
-                        The type of board to be programmed :
-                        'arduino:avr:uno', 'arduino:avr:mega'[default
-                        arduino:avr:uno]
-  -O OPTION, --option=OPTION
-                        Options to be used for programming and uploading the
-                        code : '', '--verbose-upload', '--verbose-build', '--
-                        verbose', '--preserve-temp-files'[default ]
+    $ ./rDuino_uploader_server.py  --help
+    Usage: rDuino_uploader_server.py [options]
+
+    Options:
+    -h, --help            show this help message and exit
+    -H HOST, --host=HOST  Hostname of the rDuino_Uploader_Server app [default
+                            127.0.0.1]
+    -P PORT, --port=PORT  Ethernet port for the rDuino_Uploader_Server app
+                            [default 5005]
+    -D DEVICE, --device=DEVICE
+                            Address of the target to be programmed :
+                            '/dev/ttyUSB0', '/dev/ttyUSB1', '/dev/ttyUSB2',
+                            '/dev/ttyUSB3', '/dev/ttyACM0', '/dev/ttyACM1',
+                            '/dev/ttyACM2', '/dev/ttyACM3'[default /dev/ttyUSB0]
+    -B BOARD, --board=BOARD
+                            The type of board to be programmed :
+                            'arduino:avr:uno', 'arduino:avr:mega'[default
+                            arduino:avr:uno]
+    -O OPTION, --option=OPTION
+                            Options to be used for programming and uploading the
+                            code : '', '--verbose-upload', '--verbose-build', '--
+                            verbose', '--preserve-temp-files'[default ]
 
 
 example:
+
     ./rDuino_uploader_server.py -D /dev/ttyUSB3 -P 5555 -B arduino:avr:mega -O --verbose-upload
 
