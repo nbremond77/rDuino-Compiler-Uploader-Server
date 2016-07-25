@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-5.1.dtd">
 <!-- eric project file for project rDuino_Compiler_Uploader_Server -->
-<!-- Saved: 2016-05-29, 23:11:03 -->
+<!-- Saved: 2016-07-25, 23:04:15 -->
 <!-- Copyright (C) 2016 Bernard Rémond, nbremond@laposte.net -->
 <Project version="5.1">
   <Language>en_US</Language>
@@ -15,7 +15,8 @@
   <Eol index="-1"/>
   <Sources>
     <Source>__init__.py</Source>
-    <Source>run_server.py</Source>
+    <Source>rDuino_uploader_server.py</Source>
+    <Source>test_save_compile.py</Source>
   </Sources>
   <Forms/>
   <Translations/>

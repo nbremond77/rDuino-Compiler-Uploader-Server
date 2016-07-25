@@ -85,7 +85,8 @@ rDuino_uploader_server can be run with the following options:
                             Options to be used for programming and uploading the
                             code : '', '--verbose-upload', '--verbose-build', '--
                             verbose', '--preserve-temp-files'[default ]
-
+    -E EXEC, --exec=EXEC  path and exec to be launched to compile and program
+                        the target : [default : export DISPLAY=:0.0 && arduino]
 
 example:
 

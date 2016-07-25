@@ -327,29 +327,34 @@ def flaskrun(app, default_host="127.0.0.1",
     global boardList
     global myOption    
     global myOptionList
+    global myArduinoExe
 
     # Set up the command-line options
     parser = optparse.OptionParser()
     parser.add_option("-H", "--host",
                       help="Hostname of the rDuino_Uploader_Server app " + \
-                           "[default %s]" % default_host,
+                           "[default : %s]" % default_host,
                       default=default_host)
     parser.add_option("-P", "--port",
                       help="Ethernet port for the rDuino_Uploader_Server app " + \
-                           "[default %s]" % default_port,
+                           "[default : %s]" % default_port,
                       default=default_port)
     parser.add_option("-D", "--device",
                       help="Address of the target to be programmed : " + str(targetList).strip('[]')+ \
-                           "[default %s]" % myTarget,
+                           "[default : %s]" % myTarget,
                       default=myTarget)
     parser.add_option("-B", "--board",
                       help="The type of board to be programmed : " + str(boardList).strip('[]')+ \
-                           "[default %s]" % myBoard,
+                           "[default : %s]" % myBoard,
                       default=myBoard)
     parser.add_option("-O", "--option",
                       help="Options to be used for programming and uploading the code : " + str(myOptionList).strip('[]')+ \
-                           "[default %s]" % myOption,
+                           "[default : %s]" % myOption,
                       default=myOption)
+    parser.add_option("-E", "--exec",
+                      help="path and exec to be launched to compile and program the target : " + \
+                           "[default : %s]" % myArduinoExe,
+                      default=myArduinoExe)
 
     # Two options useful for debugging purposes, but 
     # a bit dangerous so not exposed in the help message.
@@ -365,6 +370,7 @@ def flaskrun(app, default_host="127.0.0.1",
     myTarget = options.device
     myBoard = options.board
     myOption = options.option
+    myArduinoExe = options.exec
 
     # If the user selects the profiling option, then we need
     # to do a little extra setup
@@ -377,11 +383,12 @@ def flaskrun(app, default_host="127.0.0.1",
         options.debug = True
 
     print("\nRun the serveur with the following parameters :\n")
-    print("   Host  :%s" % options.host)
-    print("   Port  :%s" % options.port)
-    print("   Device:%s" % myTarget)
-    print("   Board :%s" % myBoard)
-    print("   Option:%s" % myOption)
+    print("   Host  : %s" % options.host)
+    print("   Port  : %s" % options.port)
+    print("   Device: %s" % myTarget)
+    print("   Board : %s" % myBoard)
+    print("   Option: %s" % myOption)
+    print("   Exec  : %s" % myArduinoExe)
 
     app.run(
         debug=options.debug,
