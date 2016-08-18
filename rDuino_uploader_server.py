@@ -55,7 +55,7 @@ if sys.platform.startswith('win'):
 elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
     # this excludes your current terminal "/dev/tty"
     separator = "/"  # Linux
-    myTempDirectory = "~/uploaded_file"
+    myTempDirectory = "/tmp/uploaded_file"
     myArduinoExe = "export DISPLAY=:0.0 && arduino " # Linux
 elif sys.platform.startswith('darwin'):
     separator = "/"  # Mac - Not tested
