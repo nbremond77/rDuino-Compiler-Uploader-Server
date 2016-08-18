@@ -16,8 +16,10 @@
 
 import os
 import sys
+import glob
+import serial
 import subprocess
-from datetime import datetime, date, time
+from datetime import datetime
 import optparse
 
 # from http://flask.pocoo.org/ 
@@ -28,9 +30,6 @@ from flask import Flask, abort, redirect, url_for, request, render_template,  Ma
 
 myPort = 5005
 
-#myArduinoExe = "arduino_debug.exe" # Windows
-#myArduinoExe = "Arduino.app/Contents/MacOS/Arduino" # MAC
-myArduinoExe = "export DISPLAY=:0.0 && arduino " # Linux
 
 myCompileAndUploadOption = "--upload"
 myVerify = "--verify"
@@ -44,22 +43,27 @@ boardList = [ "arduino:avr:uno",  "arduino:avr:mega"]
 myBoard = "arduino:avr:uno"
 
 myTargetOption = "--port"
-#targetList = ["COM1","COM2","COM3","COM4","COM5","COM6"]
-targetList = ["/dev/ttyUSB0", "/dev/ttyUSB1", "/dev/ttyUSB2", "/dev/ttyUSB3", "/dev/ttyACM0", "/dev/ttyACM1", "/dev/ttyACM2", "/dev/ttyACM3"]
-#myTarget = "COM3"
-myTarget = "/dev/ttyUSB0"
-#myTarget = "/dev/ttyACM0"
 
 #myOtherOptions = "--verbose-upload"
 myOptionList = ["", "--verbose-upload",  "--verbose-build",  "--verbose",  "--preserve-temp-files"]
 myOption = ""
 
-#separator = "\"  # Windows
-separator = "/"  # Linux
-myTempDirectory = "/tmp/uploaded_file"
-#myTempDirectory = "/tmp"
-#myTempDirectory = "/home/admin"
-#myTempDirectory = "~"
+if sys.platform.startswith('win'):
+    separator = "\\"  # Windows
+    myTempDirectory = "\\$HOME"
+    myArduinoExe = "arduino_debug.exe" # Windows
+elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+    # this excludes your current terminal "/dev/tty"
+    separator = "/"  # Linux
+    myTempDirectory = "~/uploaded_file"
+    myArduinoExe = "export DISPLAY=:0.0 && arduino " # Linux
+elif sys.platform.startswith('darwin'):
+    separator = "/"  # Mac - Not tested
+    myTempDirectory = "/tmp/uploaded_file"
+    myArduinoExe = "Arduino.app/Contents/MacOS/Arduino" # MAC - not tested
+else:
+    raise EnvironmentError('Unsupported platform')
+
 
 myCmd = ""
 theResult = ""
@@ -74,6 +78,49 @@ myProc = None
 # Define the main application
 app = Flask(__name__)
 
+
+
+
+
+# This function return a list of the available serial ports. Works on any system
+def serial_ports():
+    """ Lists serial port names
+
+        :raises EnvironmentError:
+            On unsupported or unknown platforms
+        :returns:
+            A list of the serial ports available on the system
+    """
+    if sys.platform.startswith('win'):
+        ports = ['COM%s' % (i + 1) for i in range(256)]
+    elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+        # this excludes your current terminal "/dev/tty"
+        ports = glob.glob('/dev/tty[A-Za-z]*')
+    elif sys.platform.startswith('darwin'):
+        ports = glob.glob('/dev/tty.*')
+    else:
+        raise EnvironmentError('Unsupported platform')
+
+    result = []
+    for port in ports:
+        try:
+            s = serial.Serial(port)
+            s.close()
+            result.append(port)
+        except (OSError, serial.SerialException):
+            pass
+    return result
+    
+
+#targetList = ["COM1","COM2","COM3","COM4","COM5","COM6"]
+#targetList = ["/dev/ttyUSB0", "/dev/ttyUSB1", "/dev/ttyUSB2", "/dev/ttyUSB3", "/dev/ttyACM0", "/dev/ttyACM1", "/dev/ttyACM2", "/dev/ttyACM3"]
+targetList = serial_ports()
+#myTarget = "COM3"
+myTarget = "/dev/ttyUSB0"
+#myTarget = "/dev/ttyACM0"
+#myTarget = targetList[1]
+
+    
 #global app
 
 # Define the routes
