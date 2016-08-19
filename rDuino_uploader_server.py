@@ -63,7 +63,9 @@ elif sys.platform.startswith('darwin'):
     myArduinoExe = "Arduino.app/Contents/MacOS/Arduino" # MAC - not tested
 else:
     raise EnvironmentError('Unsupported platform')
-
+print("TempDirectory :%s" % myTempDirectory)
+print("separator :%s" % separator)
+print("ArduinoExe :%s\n" % myArduinoExe)
 
 myCmd = ""
 theResult = ""
@@ -92,7 +94,7 @@ def serial_ports():
             A list of the serial ports available on the system
     """
     if sys.platform.startswith('win'):
-        ports = ['COM%s' % (i + 1) for i in range(256)]
+        ports = ['COM%s' % (i + 1) for i in range(25)]
     elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
         # this excludes your current terminal "/dev/tty"
         ports = glob.glob('/dev/tty[A-Za-z]*')
@@ -101,12 +103,15 @@ def serial_ports():
     else:
         raise EnvironmentError('Unsupported platform')
 
+    print("  Serial port list :%s" % ports)
     result = []
     for port in ports:
+        print("     trying port :%s" % port)
         try:
             s = serial.Serial(port)
             s.close()
             result.append(port)
+            print("         OK.")
         except (OSError, serial.SerialException):
             pass
     return result
@@ -115,10 +120,13 @@ def serial_ports():
 #targetList = ["COM1","COM2","COM3","COM4","COM5","COM6"]
 #targetList = ["/dev/ttyUSB0", "/dev/ttyUSB1", "/dev/ttyUSB2", "/dev/ttyUSB3", "/dev/ttyACM0", "/dev/ttyACM1", "/dev/ttyACM2", "/dev/ttyACM3"]
 targetList = serial_ports()
-#myTarget = "COM3"
-myTarget = "/dev/ttyUSB0"
+myTarget = "COM5"
+#myTarget = "/dev/ttyUSB0"
 #myTarget = "/dev/ttyACM0"
 #myTarget = targetList[1]
+
+print("targetList :%s" % targetList)
+print("myTarget :%s\n" % myTarget)
 
     
 #global app
@@ -288,6 +296,7 @@ def openIDE():
     global myFileName
     global compileTime
     global myProc
+    global targetList
     
     if request.method == 'POST':
 
@@ -363,7 +372,9 @@ def openIDE():
         print("\nThe errors :\n%s\n" % theError)
         print("\nThe Return Code :\n%s\n" % theReturnCode)
         print(" Done.\n")
-    
+
+    targetList = serial_ports()
+    print("targetList :%s" % targetList)    
     return render_template('main.html', thePort=myPort, theBoardList=boardList, theBoard=myBoard, theTargetList=targetList, theTarget=myTarget, theOptionList=myOptionList, theOption=myOption, theTempFile=myTempDirectory+separator+myFileName, result=theResult, error=theError)
 
 
@@ -378,6 +389,7 @@ def upload():
     global myFileName
     global compileTime
     global myProc
+    global targetList
     
     if request.method == 'POST':
 
@@ -454,6 +466,8 @@ def upload():
         print("\nThe Return Code :\n%s\n" % theReturnCode)
         print(" Done.\n")
     
+    targetList = serial_ports()
+    print("targetList :%s" % targetList)    
     return render_template('main.html', thePort=myPort, theBoardList=boardList, theBoard=myBoard, theTargetList=targetList, theTarget=myTarget, theOptionList=myOptionList, theOption=myOption, theTempFile=myTempDirectory+separator+myFileName, result=theResult, error=theError)
 
 
