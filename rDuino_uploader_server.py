@@ -37,7 +37,7 @@ myInstallLibrary = "--install-library"
 myInstallBoard = "--install-boards"
 
 myBoardOptions = "--board"
-boardList = [ "arduino:avr:uno",  "arduino:avr:mega"]
+boardList = [ "arduino:avr:uno",  "arduino:avr:mega:cpu=atmega2560"]
 #myBoard = "arduino:avr:nano:cpu=atmega168"
 #myBoard = "arduino:avr:mega"
 myBoard = "arduino:avr:uno"
@@ -486,6 +486,8 @@ def main_page():
     global myProc
 
     print(" Call main page.\n")
+    targetList = serial_ports()
+    print("targetList :%s" % targetList)    
     
     return render_template('main.html', thePort=myPort, theBoardList=boardList, theBoard=myBoard, theTargetList=targetList, theTarget=myTarget, theOptionList=myOptionList, theOption=myOption, theTempFile=myTempDirectory+separator+myFileName, result=theResult, error=theError)
 
