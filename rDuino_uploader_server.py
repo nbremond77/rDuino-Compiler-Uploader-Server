@@ -120,10 +120,13 @@ def serial_ports():
 #targetList = ["COM1","COM2","COM3","COM4","COM5","COM6"]
 #targetList = ["/dev/ttyUSB0", "/dev/ttyUSB1", "/dev/ttyUSB2", "/dev/ttyUSB3", "/dev/ttyACM0", "/dev/ttyACM1", "/dev/ttyACM2", "/dev/ttyACM3"]
 targetList = serial_ports()
-myTarget = "COM5"
+#myTarget = "COM5"
 #myTarget = "/dev/ttyUSB0"
 #myTarget = "/dev/ttyACM0"
-#myTarget = targetList[1]
+if len(targetList) > 0:
+    myTarget = targetList[0]
+else:
+    myTarget = ""
 
 print("targetList :%s" % targetList)
 print("myTarget :%s\n" % myTarget)
