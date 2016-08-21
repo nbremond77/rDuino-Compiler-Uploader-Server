@@ -51,7 +51,7 @@ myOption = ""
 
 if sys.platform.startswith('win'):
     separator = "\\"  # Windows
-    myTempDirectory = "\\$HOME"
+    myTempDirectory = "%TEMP%"
     myArduinoExe = "arduino_debug.exe" # Windows
 elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
     # this excludes your current terminal "/dev/tty"
@@ -320,7 +320,7 @@ def openIDE():
 
         # Write the code to a temp file
         try:
-            f = open(theFileName, "w")
+            f = open(theFileName, "wb")
             print("Trying...\n")
 #        except (OSError, IOError) as err:
         except:
@@ -328,7 +328,7 @@ def openIDE():
         else:
             try:
                 print("Writing...\n")
-                f.write(theCode)
+                f.write(theCode + "\n")
                 print("Code written to %s\n" % theFileName)
 #            except  (OSError, IOError) as err:
             except:
@@ -411,9 +411,16 @@ def upload():
         print("The code:\n%s\n" % theCode)
         print("Try to save the code to a local file %s\n" % theFileName)
 
+# from  https://github.com/BlocklyDuino/BlocklyDuino/blob/gh-pages/arduino_web_server.py  line 111
+#        dirname = tempfile.mkdtemp()
+#        sketchname = os.path.join(dirname, os.path.basename(dirname)) + ".ino"
+#        f = open(sketchname, "wb")
+#        f.write(text + "\n")
+#        f.close()
+
         # Write the code to a temp file
         try:
-            f = open(theFileName, "w")
+            f = open(theFileName, "wb")
             print("Trying...\n")
 #        except (OSError, IOError) as err:
         except:
@@ -421,7 +428,7 @@ def upload():
         else:
             try:
                 print("Writing...\n")
-                f.write(theCode)
+                f.write(theCode + "\n")
                 print("Code written to %s\n" % theFileName)
 #            except  (OSError, IOError) as err:
             except:
@@ -506,7 +513,7 @@ def compile():
 
         # Write the code to a temp file
         try:
-            f = open(theFileName, "w")
+            f = open(theFileName, "wb")
             print("Trying...\n")
 #        except (OSError, IOError) as err:
         except:
@@ -514,7 +521,7 @@ def compile():
         else:
             try:
                 print("Writing...\n")
-                f.write(theCode)
+                f.write(theCode + "\n")
                 print("Code written to %s\n" % theFileName)
 #            except  (OSError, IOError) as err:
             except:
