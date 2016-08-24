@@ -19,8 +19,20 @@ import sys
 import glob
 import serial
 import subprocess
-from datetime import datetime
+import tempfile
+import time
+import datetime
 import optparse
+#from easyprocess import EasyProcess # https://pypi.python.org/pypi/EasyProcess
+import sys
+
+
+
+import logging
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR) # Only the errors will be displayed, not the HTTP requests in the flask server
+# See http://stackoverflow.com/questions/14888799/disable-console-messages-in-flask-server
+
 
 # from http://flask.pocoo.org/ 
 from flask import Flask, abort, redirect, url_for, request, render_template,  Markup,  make_response,  session,  escape,  jsonify
@@ -49,36 +61,42 @@ myOption = ""
 
 if sys.platform.startswith('win'):
     separator = "\\"  # Windows
-    myTempDirectory = "%TEMP%\\Arduino\\Arduino"
-#    myTempDirectory = "D:\\Users\\s551544\\Documents\\Arduino\\Arduino"
-    myFileName = "Arduino.ino"    
-    myArduinoExe = "D:\\Users\\s551544\\Personnel\\Tools\\Arduino\\arduino_debug.exe" # Windows
+    myTempDirectory = "scripts\\rDduino\\blockly_upload_temp"
+#    myTempDirectory = "%USER%\\Arduino\\Arduino"
+#    myTempDirectory = "D:\\Users\\s551544\\Documents\\Arduino\\Blockly_temp"
+    myFileName = "blockly_upload_temp.ino"
+    myArduinoToolPath = "D:\\Users\\s551544\\Personnel\\Tools\\Arduino\\"
+#    myArduinoToolPath = "C:\Programmation\\Arduino\\"
+#    myArduinoUploadExe = "arduino_debug.exe" # Windows
+    myArduinoUploadExe = "arduino.exe" # Windows
+    myArduinoCompileExe = "arduino.exe" # Windows
     myTarget = "COM1"    
 elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
     separator = "/"  # Linux
-    myTempDirectory = "/tmp/Arduino/Arduino"
-    myFileName = "Arduino.ino"    
-    myArduinoExe = "export DISPLAY=:0.0 && arduino " # Linux
+    myTempDirectory = "rDduin/blockly_upload_temp"
+    myFileName = "blockly_upload_temp.ino"    
+    myArduinoToolPath = ""
+    myArduinoUploadExe = "export DISPLAY=:0.0 && arduino " # Linux
+    myArduinoCompileExe = "export DISPLAY=:0.0 && arduino " # Linux
     myTarget = "/dev/ttyUSB0"    
 elif sys.platform.startswith('darwin'):
     separator = "/"  # Mac - Not tested
-    myTempDirectory = "/tmp/Arduino/Arduino"
-    myFileName = "Arduino.ino"    
-    myArduinoExe = "Arduino.app/Contents/MacOS/Arduino" # MAC - not tested
+    myTempDirectory = "rDduino/blockly_upload_temp"
+    myFileName = "blockly_upload_temp.ino"    
+    myArduinoToolPath = "Arduino.app/Contents/MacOS/"
+    myArduinoUploadExe = "Arduino" # MAC - not tested
+    myArduinoCompileExe = "Arduino" # MAC - not tested
     myTarget = "/dev/ttyUSB0"    
 else:
     raise EnvironmentError('Unsupported platform')
     
-print("TempDirectory :%s" % myTempDirectory)
-print("Filename :%s" % myFileName)
-print("separator :%s" % separator)
-print("ArduinoExe :%s\n" % myArduinoExe)
 
 myCmd = ""
 theResult = ""
 theError = ""
 theReturnCode = 999
-compileTime = datetime.now()
+compileTime = datetime.datetime.now()
+computingInProgress = False
 
 myProc = None
 
@@ -135,7 +153,7 @@ if len(targetList) > 0:
     myTarget = targetList[0]
 
 
-print("Serial port targetList : %s \n   --> myTarget : %s" % (targetList, myTarget))  
+print("Serial port list : %s \n   --> myTarget : %s" % (targetList, myTarget))  
 
     
 #global app
@@ -156,7 +174,7 @@ def main_page():
 
     print(" Call main page.\n")
     targetList = [""] + serial_ports()
-    print("targetList : %s \n   --> myTarget : %s" % (targetList, myTarget))     
+    print("Updated list of serial ports : %s \n   --> myTarget : %s" % (targetList, myTarget))     
     
     return render_template('main.html', thePort=myPort, theBoardList=boardList, theBoard=myBoard, theTargetList=targetList, theTarget=myTarget, theOptionList=myOptionList, theOption=myOption, theTempFile=myTempDirectory+separator+myFileName, result=theResult, error=theError)
 
@@ -176,7 +194,7 @@ def install_library():
         theReturnCode = 999        
         theLibrary = request.form['library']
         # arduino --install-library "Bridge:1.0.0"
-        myCmd = myArduinoExe+" "+myInstallLibrary+" "+theLibrary
+        myCmd = myArduinoToolPath + myArduinoUploadExe +" "+myInstallLibrary+" "+theLibrary
         print("%s ..." % myCmd)
         #theResult = os.system(myCmd)
         proc = subprocess.Popen(myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -205,7 +223,7 @@ def install_board():
         theReturnCode = 999        
         theBoard = request.form['board']
         # arduino --install-boards "arduino:sam"
-        myCmd = myArduinoExe+" "+myInstallBoard+" "+theBoard
+        myCmd = myArduinoToolPath + myArduinoUploadExe + " "+myInstallBoard+" "+theBoard
         print("%s ..." % myCmd)
 #        theResult = os.system(myCmd)
         proc = subprocess.Popen(myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -291,8 +309,12 @@ def set_set_arduino_exe():
     global theReturnCode
 
     if request.method == 'POST':
-        myArduinoExe = request.form['arduino_exe']
-        print("Arduino EXE set to:[%s]\n" % myArduinoExe)
+        myArduinoToolPath = request.form['arduino_tool_path']
+        print("Arduino tool path set to:[%s]\n" % myArduinoToolPath)
+        myArduinoUploadExe = request.form['arduino_upload_exe']
+        print("Arduino Upload EXE set to:[%s]\n" % myArduinoUploadExe)
+        myArduinoCompileExe = request.form['arduino_compile_exe']
+        print("Arduino Compile EXE set to:[%s]\n" % myArduinoCompileExe)
         theResult = ""
         theError = ""
         theReturnCode = 999        
@@ -310,6 +332,7 @@ def openIDE():
     global compileTime
     global myProc
     global targetList
+    global computingInProgress
     
     if request.method == 'POST':
 
@@ -319,9 +342,10 @@ def openIDE():
         theCode = ""
         myCmd = ""
         
-#        tmp = request.data
-        theCode = tmp.decode(encoding='UTF-8')
-        theCode = tmp
+        tmp = request.data
+#        theCode = tmp.decode(encoding='UTF-8')
+        theCode = tmp.decode() + "\n"
+        
         theFileName = myTempDirectory + separator + myFileName
         print("The code:\n%s\n" % theCode)
         print("Try to save the code to a local file %s\n" % theFileName)
@@ -347,51 +371,12 @@ def openIDE():
 
 
         # arduino --board arduino:avr:nano:cpu=atmega168 --port /dev/ttyACM0 --upload /path/to/sketch/sketch.ino
-        compileTime = datetime.now()
-        myCmd = myArduinoExe+" "+myBoardOptions+" "+myBoard+" "+myTargetOption+" "+myTarget+" "+myOption+" "+myTempDirectory+separator+myFileName
+        compileTime = datetime.datetime.now()
+        myCmd = myArduinoToolPath + myArduinoCompileExe +" "+myTempDirectory+separator+myFileName
         print("\nThe shell command:\n%s\n" % myCmd)
 
-#        theResult = os.system(myCmd)
-        myProc = subprocess.Popen(myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-#        myProc = subprocess.Popen(myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.Popen(myCmd)
         
-        # Subprocess blocking
-        #(out, err) = myProc.communicate()
-        
-        # Non blocking
-        theResult = myCmd + "<br/><br/>"
-            
-        if myProc:
-            for line in myProc.stdout:
-                #out = str(line.rstrip())
-                result = line.decode('utf-8', errors='ignore')
-                theResult = theResult + result.replace("\n","<br/>")
-            print("-- Result:[%s]\n" % theResult)
-            #myProc.stdout.flush()
-            for line in myProc.stderr:
-                #err = str(line.rstrip())
-                error = line.decode('utf-8', errors='ignore')
-                theError = theError + error.replace("\n","<br/>")
-            print("-- Error:[%s]\n" % theError)
-            #myProc.stderr.flush()  
-            
-            status = myProc.poll()
-            if status is not None: # End of subprocess
-                if (theError.find("can't open") >= 0):
-                    theReturnCode = -2 # Error
-                elif (theError.find("stk500_getsync") >= 0):
-                    theReturnCode = -3 # Error
-                else:
-                    theReturnCode = status # Good
-
-
-        print("\nThe output of the compiler-linker-uploader:\n%s\n" % theError)
-        print("\nThe errors :\n%s\n" % theError)
-        print("\nThe Return Code :\n%s\n" % theReturnCode)
-        print(" Done.\n")
-
-    targetList = [""] + serial_ports()
-    print("targetList : %s \n   --> myTarget : %s" % (targetList, myTarget))  
     return render_template('main.html', thePort=myPort, theBoardList=boardList, theBoard=myBoard, theTargetList=targetList, theTarget=myTarget, theOptionList=myOptionList, theOption=myOption, theTempFile=myTempDirectory+separator+myFileName, result=theResult, error=theError)
 
 
@@ -407,6 +392,7 @@ def upload():
     global compileTime
     global myProc
     global targetList
+    global computingInProgress
     
     if request.method == 'POST':
 
@@ -457,48 +443,23 @@ def upload():
 
 
         # arduino --board arduino:avr:nano:cpu=atmega168 --port /dev/ttyACM0 --upload /path/to/sketch/sketch.ino
-        compileTime = datetime.now()
-        myCmd = myArduinoExe+" "+myBoardOptions+" "+myBoard+" "+myTargetOption+" "+myTarget+" "+myOption+" "+myCompileAndUploadOption+" "+myTempDirectory+separator+myFileName
+        compileTime = datetime.datetime.now()
+        myCmd = myArduinoToolPath + myArduinoUploadExe +" "+myBoardOptions+" "+myBoard+" "+myTargetOption+" "+myTarget+" "+myOption+" "+myCompileAndUploadOption+" "+myTempDirectory+separator+myFileName
         print("\nThe shell command:\n%s\n" % myCmd)
 
-#        theResult = os.system(myCmd)
-        myProc = subprocess.Popen(myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-#        myProc = subprocess.Popen(myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        
-        # Subprocess blocking
-        #(out, err) = myProc.communicate()
-        
-        # Non blocking
-        theResult = myCmd + "<br/><br/>"
-            
-        if myProc:
-            for line in myProc.stdout:
-                #out = str(line.rstrip())
-                result = line.decode('utf-8', errors='ignore')
-                theResult = theResult + result.replace("\n","<br/>")
-            print("-- Result:[%s]\n" % theResult)
-            #myProc.stdout.flush()
-            for line in myProc.stderr:
-                #err = str(line.rstrip())
-                error = line.decode('utf-8', errors='ignore')
-                theError = theError + error.replace("\n","<br/>")
-            print("-- Error:[%s]\n" % theError)
-            #myProc.stderr.flush()
+        # Clean the result:
+        theResult = "\nCommand: \n" + myCmd + "\n\nResult:\n"
+        theError = ""
+        theReturnCode = 999
 
-            status = myProc.poll()
-            if status is not None: # End of subprocess
-                if (theError.find("can't open") >= 0):
-                    theReturnCode = -2 # Error
-                elif (theError.find("stk500_getsync") >= 0):
-                    theReturnCode = -3 # Error
-                else:
-                    theReturnCode = status # Good
-            
-        print("\nThe output of the compiler-linker-uploader:\n%s\n" % theError)
-        print("\nThe errors :\n%s\n" % theError)
-        print("\nThe Return Code :\n%s\n" % theReturnCode)
-        print(" Done.\n")
-    
+        myProc = subprocess.Popen(myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1)
+        computingInProgress = True
+#        myProc = subprocess.Popen(myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+#        myProc = subprocess.Popen(myCmd, stdout=pipe_output, stderr=subprocess.STDOUT,bufsize=1)
+#        myProc = subprocess.Popen(myCmd, stdout=subprocess.STDOUT, stderr=subprocess.STDOUT,bufsize=1)
+   
+        print("\nProcess called..." )
+
     targetList = [""] + serial_ports()
     print("targetList : %s \n   --> myTarget : %s" % (targetList, myTarget))    
     return render_template('main.html', thePort=myPort, theBoardList=boardList, theBoard=myBoard, theTargetList=targetList, theTarget=myTarget, theOptionList=myOptionList, theOption=myOption, theTempFile=myTempDirectory+separator+myFileName, result=theResult, error=theError)
@@ -516,6 +477,7 @@ def compile():
     global compileTime
     global myProc
     global targetList
+    global computingInProgress
     
     if request.method == 'POST':
 
@@ -526,8 +488,10 @@ def compile():
         myCmd = ""
         
         tmp = request.data
-        theCode = tmp.decode(encoding='UTF-8')
-#        theCode = tmp
+        
+#        theCode = tmp.decode(encoding='UTF-8')
+        theCode = tmp.decode() + "\n"
+        
         theFileName = myTempDirectory + separator + myFileName
         print("The code:\n%s\n" % theCode)
         print("Try to save the code to a local file %s\n" % theFileName)
@@ -553,47 +517,15 @@ def compile():
 
 
         # arduino --board arduino:avr:nano:cpu=atmega168 --port /dev/ttyACM0 --upload /path/to/sketch/sketch.ino
-        compileTime = datetime.now()
-        myCmd = myArduinoExe+" "+myBoardOptions+" "+myBoard+" "+myTargetOption+" "+myTarget+" "+myOption+" "+myCompileOption+" "+myTempDirectory+separator+myFileName
+        compileTime = datetime.datetime.now()
+        myCmd = myArduinoToolPath + myArduinoCompileExe+" "+myBoardOptions+" "+myBoard+" "+myTargetOption+" "+myTarget+" "+myOption+" "+myCompileOption+" "+myTempDirectory+separator+myFileName
         print("\nThe shell command:\n%s\n" % myCmd)
 
-#        theResult = os.system(myCmd)
-        myProc = subprocess.Popen(myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-#        myProc = subprocess.Popen(myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        
-        # Subprocess blocking
-        #(out, err) = myProc.communicate()
-        
-        # Non blocking
-        theResult = myCmd + "<br/><br/>"
-            
-        if myProc:
-            for line in myProc.stdout:
-                #out = str(line.rstrip())
-                result = line.decode('utf-8', errors='ignore')
-                theResult = theResult + result.replace("\n","<br/>")
-            print("-- Result:[%s]\n" % theResult)
-            #myProc.stdout.flush()
-            for line in myProc.stderr:
-                #err = str(line.rstrip())
-                error = line.decode('utf-8', errors='ignore')
-                theError = theError + error.replace("\n","<br/>")
-            print("-- Error:[%s]\n" % theError)
-            #myProc.stderr.flush()  
-            
-            status = myProc.poll()
-            if status is not None: # End of subprocess
-                if (theError.find("can't open") >= 0):
-                    theReturnCode = -2 # Error
-                elif (theError.find("stk500_getsync") >= 0):
-                    theReturnCode = -3 # Error
-                else:
-                    theReturnCode = status # Good
-                
-        print("\nThe output of the compiler-linker:\n%s\n" % theError)
-        print("\nThe errors :\n%s\n" % theError)
-        print("\nThe Return Code :\n%s\n" % theReturnCode)
-        print(" Done.\n")
+        myProc = subprocess.Popen(myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1)
+        computingInProgress = True
+   
+        print("\nProcess called..." )
+
     
     targetList = [""] + serial_ports()
     print("targetList : %s \n   --> myTarget : %s" % (targetList, myTarget))    
@@ -607,21 +539,31 @@ def get_result():
     global compileTime
     global theReturnCode
     global myProc
+    global computingInProgress
+
+    theTime = datetime.datetime.now()
+
     
-    if myProc:
+    if myProc is not None:
+        theTime = datetime.datetime.now()
         for line in myProc.stdout:
             #out = str(line.rstrip())
-            result = line.decode('utf-8')
+            result = line.decode('utf-8', errors='ignore')
             theResult = theResult + result.replace("\n","<br/>")
             print("   ++ Result:[%s]\n" % result)
         #myProc.stdout.flush()
+            if datetime.datetime.now() >= theTime + datetime.timedelta(0,3): # 3 seconds timeout
+                return jsonify(date=theTime.strftime("%A %d %B %Y %H:%M:%S"),  compileTime =  compileTime.strftime("%A %d %B %Y %H:%M:%S"), result=theResult,  error = theError, returnCode=theReturnCode)
         
+        theTime = datetime.datetime.now()
         for line in myProc.stderr:
             #err = str(line.rstrip())
-            error = line.decode('utf-8')
+            error = line.decode('utf-8', errors='ignore')
             theError = theError + error.replace("\n","<br/>")
             print("   ++ Error:[%s]\n" % error)
         #myProc.stderr.flush()    
+            if datetime.datetime.now() >= theTime + datetime.timedelta(0,3): # 3 seconds timeout
+                return jsonify(date=theTime.strftime("%A %d %B %Y %H:%M:%S"),  compileTime =  compileTime.strftime("%A %d %B %Y %H:%M:%S"), result=theResult,  error = theError, returnCode=theReturnCode)
 
         status = myProc.poll()
         if status is not None: # End of subprocess
@@ -631,14 +573,18 @@ def get_result():
                 theReturnCode = -3 # Error
             else:
                 theReturnCode = status # Good
-                
-    theTime = datetime.now()
+            print("   ++ Return code:[%s]\n" % theReturnCode)
+         
+            myProc = None
+            computingInProgress = False        
+        
+        
     return jsonify(date=theTime.strftime("%A %d %B %Y %H:%M:%S"),  compileTime =  compileTime.strftime("%A %d %B %Y %H:%M:%S"), result=theResult,  error = theError, returnCode=theReturnCode)
 
 
 
     
-def flaskrun(app, default_host="127.0.0.1", 
+def flaskrun(default_host="127.0.0.1", 
                   default_port=myPort):
     """
     Takes a flask.Flask instance and runs it. Parses 
@@ -650,9 +596,12 @@ def flaskrun(app, default_host="127.0.0.1",
     global boardList
     global myOption    
     global myOptionList
-    global myArduinoExe
+    global myArduinoToolPath
+    global myArduinoUploadExe
+    global myArduinoCompileExe
     global debugMode
     global myTempDirectory
+    global app
 
     # Set up the command-line options
     parser = optparse.OptionParser()
@@ -676,11 +625,19 @@ def flaskrun(app, default_host="127.0.0.1",
                       help="Options to be used for programming and uploading the code : " + str(myOptionList).strip('[]')+ \
                            "[default : %s]" % myOption,
                       default=myOption)
-    parser.add_option("-E", "--exec",
-                      help="path and exec to be launched to compile and program the target : " + \
-                           "[default : %s]" % myArduinoExe,
-                      default=myArduinoExe)
-    #parser.add_option("-d", "--debug",
+    parser.add_option("-T", "--tool-path",
+                      help="path of the Arduino tools : " + \
+                           "[default : %s]" % myArduinoToolPath,
+                      default=myArduinoToolPath)
+    parser.add_option("-U", "--upload-exec",
+                      help="exec to be launched to compile and program the target : " + \
+                           "[default : %s]" % myArduinoUploadExe,
+                      default=myArduinoUploadExe)
+    parser.add_option("-C", "--compile-exec",
+                      help="exec to be launched to open the Arduino IDE : " + \
+                           "[default : %s]" % myArduinoCompileExe,
+                      default=myArduinoCompileExe)
+                      #parser.add_option("-d", "--debug",
     #                  help="Debug mode of Falsk. Do not use in production... : " + \
     #                       "[default : %s]" % debugMode,
     #                  default=debugMode)
@@ -696,10 +653,13 @@ def flaskrun(app, default_host="127.0.0.1",
 
     options, _ = parser.parse_args()
     
+    #print("%s" % options)
     myTarget = options.device
     myBoard = options.board
     myOption = options.option
-    myArduinoExe = options.exec
+    myArduinoToolPath = options.tool_path
+    myArduinoUploadExe = options.upload_exec
+    myArduinoCompileExe = options.compile_exec
 
     # If the user selects the profiling option, then we need
     # to do a little extra setup
@@ -711,15 +671,19 @@ def flaskrun(app, default_host="127.0.0.1",
                        restrictions=[30])
         options.debug = True
 
-    print("\nRun the serveur with the following parameters :\n")
-    print("   Host           : %s" % options.host)
-    print("   Port           : %s" % options.port)
-    print("   Device         : %s" % myTarget)
-    print("   Board          : %s" % myBoard)
-    print("   Option         : %s" % myOption)
-    print("   Exec           : %s" % myArduinoExe)
-    print("   INO Directory  : %s" % myTempDirectory)
-
+    print("\nThe Arduino Uploader serveur will run with the following parameters :\n")
+    print("   Host                : %s" % options.host)
+    print("   Port                : %s" % options.port)
+    print("   Device              : %s" % myTarget)
+    print("   Board               : %s" % myBoard)
+    print("   Option              : %s" % myOption)
+    print("   Exec path           : %s" % myArduinoToolPath)
+    print("   Compile Exec        : %s" % myArduinoCompileExe)
+    print("   Upload Exec         : %s" % myArduinoUploadExe)
+    print("   INO temp Directory  : %s" % myTempDirectory)
+    print("   Filename            : %s" % myFileName)
+    print("   separator           : %s" % separator)
+    print("\n")
 
     #app.config['DEBUG'] = True
     
@@ -732,14 +696,14 @@ def flaskrun(app, default_host="127.0.0.1",
     #app.run(port=myPort)    
 
 if __name__ == '__main__':
-    global app
+    #global app
     
     # Create the temp file directory if needed
     if not(os.path.isdir(myTempDirectory)):
         os.system("mkdir "+myTempDirectory)
     
     # Start the main server
-    flaskrun(app)
+    flaskrun()
 
 
 
