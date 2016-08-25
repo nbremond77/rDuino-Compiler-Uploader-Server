@@ -73,7 +73,7 @@ if sys.platform.startswith('win'):
     myTarget = "COM1"    
 elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
     separator = "/"  # Linux
-    myTempDirectory = "rDduin/blockly_upload_temp"
+    myTempDirectory = "/home/nbremond/Arduino/blockly_upload_temp"
     myFileName = "blockly_upload_temp.ino"    
     myArduinoToolPath = ""
     myArduinoUploadExe = "export DISPLAY=:0.0 && arduino " # Linux
@@ -81,7 +81,7 @@ elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
     myTarget = "/dev/ttyUSB0"    
 elif sys.platform.startswith('darwin'):
     separator = "/"  # Mac - Not tested
-    myTempDirectory = "rDduino/blockly_upload_temp"
+    myTempDirectory = "Arduino/blockly_upload_temp"
     myFileName = "blockly_upload_temp.ino"    
     myArduinoToolPath = "Arduino.app/Contents/MacOS/"
     myArduinoUploadExe = "Arduino" # MAC - not tested
@@ -375,7 +375,15 @@ def openIDE():
         myCmd = myArduinoToolPath + myArduinoCompileExe +" "+myTempDirectory+separator+myFileName
         print("\nThe shell command:\n%s\n" % myCmd)
 
-        subprocess.Popen(myCmd)
+        if sys.platform.startswith('win'):
+            subprocess.Popen(myCmd)
+        elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+            subprocess.Popen(myCmd, shell=True)
+        elif sys.platform.startswith('darwin'):
+            subprocess.Popen(myCmd, shell=True)
+        else:
+            raise EnvironmentError('Unsupported platform')
+
         
     return render_template('main.html', thePort=myPort, theBoardList=boardList, theBoard=myBoard, theTargetList=targetList, theTarget=myTarget, theOptionList=myOptionList, theOption=myOption, theTempFile=myTempDirectory+separator+myFileName, result=theResult, error=theError)
 
@@ -452,7 +460,15 @@ def upload():
         theError = ""
         theReturnCode = 999
 
-        myProc = subprocess.Popen(myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1)
+        if sys.platform.startswith('win'):
+            myProc = subprocess.Popen(myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1)
+        elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+            myProc = subprocess.Popen(myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, shell=True)
+        elif sys.platform.startswith('darwin'):
+            myProc = subprocess.Popen(myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, shell=True) # NOT TESTED
+        else:
+            raise EnvironmentError('Unsupported platform')
+
         computingInProgress = True
 #        myProc = subprocess.Popen(myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 #        myProc = subprocess.Popen(myCmd, stdout=pipe_output, stderr=subprocess.STDOUT,bufsize=1)
@@ -518,10 +534,19 @@ def compile():
 
         # arduino --board arduino:avr:nano:cpu=atmega168 --port /dev/ttyACM0 --upload /path/to/sketch/sketch.ino
         compileTime = datetime.datetime.now()
-        myCmd = myArduinoToolPath + myArduinoCompileExe+" "+myBoardOptions+" "+myBoard+" "+myTargetOption+" "+myTarget+" "+myOption+" "+myCompileOption+" "+myTempDirectory+separator+myFileName
+        myCmd = myArduinoToolPath + myArduinoCompileExe+" "+myBoardOptions+" "+myBoard+" "+myOption+" "+myCompileOption+" "+myTempDirectory+separator+myFileName
         print("\nThe shell command:\n%s\n" % myCmd)
 
-        myProc = subprocess.Popen(myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1)
+#OK Windows        myProc = subprocess.Popen(myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1)
+        if sys.platform.startswith('win'):
+            myProc = subprocess.Popen(myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1)
+        elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+            myProc = subprocess.Popen(myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, shell=True)
+        elif sys.platform.startswith('darwin'):
+            myProc = subprocess.Popen(myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, shell=True) # NOT TESTED
+        else:
+            raise EnvironmentError('Unsupported platform')
+
         computingInProgress = True
    
         print("\nProcess called..." )
