@@ -61,9 +61,9 @@ myInstallBoard = "--install-boards"
 #-P\\.\COM1 
 #-D -Uflash:w:C:\Users\sandy_000\Documents\Arduino\polargraph_firmware\polargraph_server_a1\polargraph_server_a1_adafruit_v1.cpp.hex:i
 
-myAvrdudeOptions_file = " -D -Uflash:w:"
+myAvrdudeOptions_file = " -c stk500v2 -D -Uflash:w:"
 myAvrdudeOptions_file_end = ":i"
-myAvrdudeOptions_target = " -b 115200 -c stk500v2 -P "
+myAvrdudeOptions_target = " -b 115200 -P "
 myAvrdudeOptions_target_end = ""
 myAvrdudeOptions_configfile = " -C "
 myAvrdudeConfigFile = "hardware\\tools\\avr\\etc\\avrdude.conf"
@@ -294,11 +294,13 @@ def upload_hex():
         myTarget = request.form['target']
 
         # avrdude -U flash:w:[put-hex-file-path-here]:i -C avrdude.conf -v -p atmega328 -b 115200 -c stk500v2 -P [put-device-path-here]
-        myCmd = [myArduinoToolPath+myAvrDudeExe]
-        myCmd.append(myAvrdudeOptions_file+myHEXfilePath+separator+myHEXfile+myAvrdudeOptions_file_end)
-        myCmd.append(myAvrdudeOptions_configfile+myArduinoToolPath+myAvrdudeConfigFile+myAvrdudeOptions_configfile_end)
-        myCmd.append(myAvrdudeOptions_board+myAvrdudeBoard+myAvrdudeOptions_board_end)
-        myCmd.append( myAvrdudeOptions_target+myTarget+myAvrdudeOptions_target_end)
+#        myCmd = [myArduinoToolPath+myAvrDudeExe]
+#        myCmd.append(myAvrdudeOptions_file+myHEXfilePath+separator+myHEXfile+myAvrdudeOptions_file_end)
+#        myCmd.append(myAvrdudeOptions_configfile+myArduinoToolPath+myAvrdudeConfigFile+myAvrdudeOptions_configfile_end)
+#        myCmd.append(myAvrdudeOptions_board+myAvrdudeBoard+myAvrdudeOptions_board_end)
+#        myCmd.append( myAvrdudeOptions_target+myTarget+myAvrdudeOptions_target_end)
+
+        myCmd = [myArduinoToolPath+myAvrDudeExe+" "+myAvrdudeOptions_file+myHEXfilePath+separator+myHEXfile+myAvrdudeOptions_file_end+" "+myAvrdudeOptions_configfile+myArduinoToolPath+myAvrdudeConfigFile+myAvrdudeOptions_configfile_end+" "+myAvrdudeOptions_board+myAvrdudeBoard+myAvrdudeOptions_board_end+" "+myAvrdudeOptions_target+myTarget+myAvrdudeOptions_target_end]
         
         # Creation of the thread
         thread_1 = RunProcess(myCmd)
@@ -309,6 +311,34 @@ def upload_hex():
     targetList = [""] + serial_ports() # Update the list of serial ports, in case a board has been connected
     return render_template('program_hex_file.html', cmd=myCmd, result=theResult, error=theError,  theTargetList=targetList, theTarget=myTarget, theFileList=myHEXfileList, theFile=myHEXfile)
     
+
+# Install a new library in the Arduino IDE
+@app.route('/run_websocket', methods=['GET', 'POST'])
+def run_websocket():
+    global myCmd
+    global theResult
+    global theError
+    global theReturnCode
+
+    theResult = ""
+    theError = ""
+    theReturnCode = "Waiting for command..." # In waiting mode"     
+    
+#    if request.method == 'POST':
+    
+#        theLibrary = request.form['library']
+        
+        # arduino --install-library "Bridge:1.0.0"
+        #myCmd = myArduinoToolPath + myArduinoUploadExe +" "+myInstallLibrary+" "+theLibrary
+#        myCmd = [myArduinoToolPath+myArduinoUploadExe, myInstallLibrary, theLibrary]
+        
+        # Creation of the thread
+#        thread_1 = RunProcess(myCmd)
+        # Launch of the thread
+#        thread_1.start()
+#        print("\nProcess called in a separate thread..." )
+        
+    return render_template('run_websocket.html', cmd=myCmd, result=theResult, error=theError)    
     
     
 # Install a new library in the Arduino IDE
