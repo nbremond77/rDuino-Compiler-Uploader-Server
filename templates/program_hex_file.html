@@ -65,31 +65,57 @@ timer1 = setInterval('updateResult()', 1000 * 1);
                 <nav id="mainnav">
                     <ul>
 <li><a href="{{ url_for("main_page") }}">Home</a></li>
-<li><a href="{{ url_for("upload_hex") }}" id="upload_hex">Upload an HEX file</a></li>
+<li class="selected-item"><a href="{{ url_for("upload_hex") }}" id="upload_hex">Upload an HEX file</a></li>
 <li><a href="{{ url_for("install_board") }}" id="install_board">Add a board to the compiler</a></li>
-<li class="selected-item"><a href="{{ url_for("install_library") }}" id="install_library">Add a library to the compiler</a></li>
+<li><a href="{{ url_for("install_library") }}" id="install_library">Add a library to the compiler</a></li>
                     </ul>
                 </nav>
 <!--  -->                
 			</aside>
 			<section id="content" class="column-right">
+          	    <article>
+Upload a binary (HEX) file to the Arduino
 
-
-
-            
-	    <article>
-Install a new library in the Arduino compiler
-
-                    <h3>The library to install</h3> 
+                <h3>The serial port</h3>
                     <fieldset>
-                        <form action={{ url_for("install_library") }} method="POST">
-                          Enter the name of the library to add to the compiler :<br>
-                          <input type="text" name="library" value=""><br>
-                          <input type="submit" value="OK">
-                        </form>
-                    </fieldset>
+                        <form action="{{url_for("upload_hex")}}" method="POST">
+                        <select name="target" id="target">
+                          {% for target in theTargetList %}
+                            {% if target == theTarget %}
+                                <option value="{{target}}" selected>{{target}}</option>
+                            {% else %}
+                                <option value="{{target}}">{{target}}</option>
+                            {% endif %}
+                          {% endfor %}  
+                        </select>
+                    <br/>The selected serial port to communicate with the target : <font color="red">{{ theTarget }}</font> <br/>
+                
+                    <h3>File to upload</h3>
+                    Currently available binary HEX files:
+                    {% for file in theFileList %}
+                        <li value="{{file}}">{{file}}</li>
+                    {% endfor %} 
+
+
+                    Available boards:<select name="filename" id="filename">
+                      {% for file in theFileList %}
+                        {% if file == theFile %}
+                            <option value="{{file}}" selected>{{file}}</option>
+                        {% else %}
+                            <option value="{{file}}">{{file}}</option>
+                        {% endif %}
+                      {% endfor %}  
+                    </select>
+                    <br/> The selected file : <font color="red">{{ theFile }}</font> <br/>
+                   
+                    <br/>
+                    <input type="submit" name="Upload" class="formbutton" value="Upload">
                     
-                    
+                    </form>
+				</fieldset>
+                
+
+              
                     <h3>The result of the last command</h3>
                     <div class="section_result"><span id=section_result>{{ result|safe }}</span></div>
                     <div class="section_error"><span id=section_error>{{ error|safe }}</span></div>
@@ -110,4 +136,4 @@ Install a new library in the Arduino compiler
 
 
 </body>
-</html>    
+</html>
