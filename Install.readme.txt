@@ -1,10 +1,14 @@
-ssh root@127.0.0.1 
 
+Linux:
+------
+sudo su # or
+ssh root@127.0.0.1 # May be used to gain root priviliges
 
-
+apt-get install python
 apt-get install python-flask
 apt-get install git
 
+# The folloging is required for Autoduino
 cd /usr/share/arduino/libraries
 git clone https://github.com/z3t0/Arduino-IRremote.git
 mv Arduino-IRremote IRremote
