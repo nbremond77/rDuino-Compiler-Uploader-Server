@@ -65,6 +65,7 @@ timer1 = setInterval('updateResult()', 1000 * 1);
                 <nav id="mainnav">
                     <ul>
 <li><a href="{{ url_for("main_page") }}">Home</a></li>
+<li><a href="{{ url_for("run_websocket") }}" id="run_websocket">Run the Firmata/Pyata Websocket</a></li>
 <li><a href="{{ url_for("upload_hex") }}" id="upload_hex">Upload an HEX file</a></li>
 <li class="selected-item"><a href="{{ url_for("install_board") }}" id="install_board">Add a board to the compiler</a></li>
 <li><a href="{{ url_for("install_library") }}" id="install_library">Add a library to the compiler</a></li>
