@@ -54,15 +54,26 @@ myInstallLibrary = "--install-library"
 myInstallBoard = "--install-boards"
 
 # avrdude -U flash:w:[put-hex-file-path-here]:i -C avrdude.conf -v -p atmega328 -b 115200 -c stk500v2 -P [put-device-path-here]
-myAvrdudeOptions_file = " -U flash:w:"
+#
+# C:\dev\Arduino\hardware/tools/avr/bin/avrdude 
+#-CC:\dev\Arduino\hardware/tools/avr/etc/avrdude.conf 
+#-v -patmega2560 -carduino -b115200 -cstk500v2
+#-P\\.\COM1 
+#-D -Uflash:w:C:\Users\sandy_000\Documents\Arduino\polargraph_firmware\polargraph_server_a1\polargraph_server_a1_adafruit_v1.cpp.hex:i
+
+myAvrdudeOptions_file = " -D -Uflash:w:"
 myAvrdudeOptions_file_end = ":i"
 myAvrdudeOptions_target = " -b 115200 -c stk500v2 -P "
 myAvrdudeOptions_target_end = ""
+myAvrdudeOptions_configfile = " -C "
 myAvrdudeConfigFile = "hardware\\tools\\avr\\etc\\avrdude.conf"
-myAvrdudeOptions_board = " -C "
-myAvrdudeOptions_board_end = " -v -p "
-myAvrdudeBoard = "atmega328"
-myHEXfilePath = "D:\\Users\\s551544\\Personnel\\Tools\\Arduino\\arduinoBinaries"
+myAvrdudeOptions_configfile_end = ""
+myAvrdudeOptions_board = " -v -p "
+myAvrdudeOptions_board_end = ""
+#myAvrdudeBoard = "atmega328"
+myAvrdudeBoard = "atmega2560"
+
+myHEXfilePath = "D:\\Users\\s551544\\Personnel\\Blockly\\rDuino-Compiler-Uploader-Server-master\\arduinoBinaries"
 myHEXfileList = [ "my_StandardFirmataPlus.ino.standard.hex", "my_StandardFirmataPlus.ino.mega.hex",  "my_StandardFirmataPlus.ino.with_bootloader.standard.hex", "my_StandardFirmataPlus.ino.with_bootloader.mega.hex"]
 
 myBoardOptions = "--board"
@@ -281,9 +292,13 @@ def upload_hex():
     
         myHEXfile = request.form['filename']
         myTarget = request.form['target']
-        
+
         # avrdude -U flash:w:[put-hex-file-path-here]:i -C avrdude.conf -v -p atmega328 -b 115200 -c stk500v2 -P [put-device-path-here]
-        myCmd = [myArduinoToolPath+myAvrDudeExe + myAvrdudeOptions_file+myHEXfilePath+separator+myHEXfile+myAvrdudeOptions_file_end + myAvrdudeOptions_board+myArduinoToolPath+myAvrdudeConfigFile+myAvrdudeOptions_board_end + myAvrdudeBoard, myAvrdudeOptions_target, myTarget, myAvrdudeOptions_target_end]
+        myCmd = [myArduinoToolPath+myAvrDudeExe]
+        myCmd.append(myAvrdudeOptions_file+myHEXfilePath+separator+myHEXfile+myAvrdudeOptions_file_end)
+        myCmd.append(myAvrdudeOptions_configfile+myArduinoToolPath+myAvrdudeConfigFile+myAvrdudeOptions_configfile_end)
+        myCmd.append(myAvrdudeOptions_board+myAvrdudeBoard+myAvrdudeOptions_board_end)
+        myCmd.append( myAvrdudeOptions_target+myTarget+myAvrdudeOptions_target_end)
         
         # Creation of the thread
         thread_1 = RunProcess(myCmd)
