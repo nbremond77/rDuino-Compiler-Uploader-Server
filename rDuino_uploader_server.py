@@ -73,7 +73,8 @@ myAvrdudeOptions_board_end = ""
 #myAvrdudeBoard = "atmega328"
 myAvrdudeBoard = "atmega2560"
 
-myHEXfilePath = "D:\\Users\\s551544\\Personnel\\Blockly\\rDuino-Compiler-Uploader-Server-master\\arduinoBinaries"
+#myHEXfilePath = "D:\\Users\\s551544\\Personnel\\Blockly\\rDuino-Compiler-Uploader-Server-master\\arduinoBinaries"
+myHEXfilePath = "D:arduinoBinaries"
 myHEXfileList = [ "my_StandardFirmataPlus.ino.standard.hex", "my_StandardFirmataPlus.ino.mega.hex",  "my_StandardFirmataPlus.ino.with_bootloader.standard.hex", "my_StandardFirmataPlus.ino.with_bootloader.mega.hex"]
 
 myBoardOptions = "--board"
@@ -87,11 +88,11 @@ myOption = ""
 
 if sys.platform.startswith('win'):
     separator = "\\"  # Windows
-#    myTempDirectory = "scripts\\rDduino\\blockly_upload_temp"
+    myTempDirectory = "scripts\\rDduino\\blockly_upload_temp"
 #    myTempDirectory = "%USER%\\Arduino\\Arduino"
-    myTempDirectory = "D:\\Users\\s551544\\Documents\\Arduino\\blockly_upload_temp"
+#    myTempDirectory = "D:\\Users\\s551544\\Documents\\Arduino\\blockly_upload_temp"
     myFileName = "blockly_upload_temp.ino"
-    myHEXfile = "test.hex"
+    myHEXfile = "my_StandardFirmataPlus.ino.standard.hex"
     myArduinoToolPath = "D:\\Users\\s551544\\Personnel\\Tools\\Arduino\\"
 #    myArduinoToolPath = "C:\Programmation\\Arduino\\"
 #    myArduinoUploadExe = "arduino_debug.exe" # Windows
@@ -103,7 +104,7 @@ elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
     separator = "/"  # Linux
     myTempDirectory = "/home/nbremond/Arduino/blockly_upload_temp"
     myFileName = "blockly_upload_temp.ino"    
-    myHEXfile = "test.hex"
+    myHEXfile = "my_StandardFirmataPlus.ino.standard.hex"
     myArduinoToolPath = ""
     myArduinoUploadExe = "export DISPLAY=:0.0 && arduino " # Linux
     myArduinoCompileExe = "export DISPLAY=:0.0 && arduino " # Linux
@@ -113,7 +114,7 @@ elif sys.platform.startswith('darwin'):
     separator = "/"  # Mac - Not tested
     myTempDirectory = "Arduino/blockly_upload_temp"
     myFileName = "blockly_upload_temp.ino"    
-    myHEXfile = "test.hex"
+    myHEXfile = "my_StandardFirmataPlus.ino.standard.hex"
     myArduinoToolPath = "Arduino.app/Contents/MacOS"
     myArduinoUploadExe = "Arduino" # MAC - not tested
     myArduinoCompileExe = "Arduino" # MAC - not tested
