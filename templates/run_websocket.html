@@ -66,7 +66,7 @@ timer1 = setInterval('updateResult()', 1000 * 1);
                     <ul>
 <li><a href="{{ url_for("main_page") }}">Home</a></li>
 <li><a href="{{ url_for("upload_hex") }}" id="upload_hex">Upload an HEX file</a></li>
-<li class="selected-item"><a href="{{ url_for("run_websocket") }}" id="run_websocket">Run the Firmata/Pyata Websocket</a></li>
+<li class="selected-item"><a href="{{ url_for("run_websocket") }}" id="run_websocket">Run the Firmata/Pymata Websocket</a></li>
 <li><a href="{{ url_for("install_board") }}" id="install_board">Add a board to the compiler</a></li>
 <li><a href="{{ url_for("install_library") }}" id="install_library">Add a library to the compiler</a></li>
                     </ul>
@@ -75,23 +75,12 @@ timer1 = setInterval('updateResult()', 1000 * 1);
 			</aside>
 			<section id="content" class="column-right">
           	    <article>
-Upload a binary (HEX) file to the Arduino
+Run the Pymata_iot communication link to remote control your Arduino
+https://github.com/MrYsLab/pymata-aio
 
-                <h3>The serial port</h3>
-                    <fieldset>
-                        <form action="{{url_for("upload_hex")}}" method="POST">
-                        <select name="target" id="target">
-                          {% for target in theTargetList %}
-                            {% if target == theTarget %}
-                                <option value="{{target}}" selected>{{target}}</option>
-                            {% else %}
-                                <option value="{{target}}">{{target}}</option>
-                            {% endif %}
-                          {% endfor %}  
-                        </select>
-                    <br/>The selected serial port to communicate with the target : <font color="red">{{ theTarget }}</font> <br/>
-                
-                    <h3>File to upload</h3>
+
+
+                    <h3>Run Pymata_iot</h3>
                     Currently available binary HEX files:
                     {% for file in theFileList %}
                         <li value="{{file}}">{{file}}</li>
