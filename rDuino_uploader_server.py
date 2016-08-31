@@ -19,6 +19,7 @@ version = "1.0"
 
 
 import os
+from os import walk
 import sys
 import glob
 import serial
@@ -75,7 +76,8 @@ myAvrdudeBoard = "atmega2560"
 
 #myHEXfilePath = "D:\\Users\\s551544\\Personnel\\Blockly\\rDuino-Compiler-Uploader-Server-master\\arduinoBinaries"
 myHEXfilePath = "D:arduinoBinaries"
-myHEXfileList = [ "my_StandardFirmataPlus.ino.standard.hex", "my_StandardFirmataPlus.ino.mega.hex",  "my_StandardFirmataPlus.ino.with_bootloader.standard.hex", "my_StandardFirmataPlus.ino.with_bootloader.mega.hex"]
+#myHEXfileList = [ "my_StandardFirmataPlus.ino.standard.hex", "my_StandardFirmataPlus.ino.mega.hex",  "my_StandardFirmataPlus.ino.with_bootloader.standard.hex", "my_StandardFirmataPlus.ino.with_bootloader.mega.hex"]
+myHEXfileList = [ ] # Will be populated at run time by exploring the myHEXfilePath folder
 
 myBoardOptions = "--board"
 boardList = [ "arduino:avr:uno",  "arduino:avr:mega:cpu=atmega2560"]
@@ -310,6 +312,14 @@ def upload_hex():
         print("\nProcess called in a separate thread..." )
         
     targetList = [""] + serial_ports() # Update the list of serial ports, in case a board has been connected
+    
+    # Get list of files in the "upload" folder
+    #from os import walk
+    myHEXfileList = []
+    for (dirpath, dirnames, filenames) in walk(myHEXfilePath):
+        myHEXfileList.extend(filenames)
+        break
+    print("myHEXfileList: %s" % myHEXfileList)
     return render_template('program_hex_file.html', cmd=myCmd, result=theResult, error=theError,  theTargetList=targetList, theTarget=myTarget, theFileList=myHEXfileList, theFile=myHEXfile)
     
 
