@@ -5,7 +5,7 @@ Description
 This small web server (a webapp), intented to run locally, that will receives a piece of Arduino code on port 5005, compile it and upload the binary to the target.
 This server has been developed to close the gap between Blockly@rduino and the real Arduino target, when CodeBender.cc is not available or can not be used.
 
-Install
+Install on Linux
 -------
     sudo pip install Flask
     chmod +x rDuino_uploader_server.py
@@ -21,7 +21,17 @@ Use:
 Or:
 
     sudo usermod -a -G uucp $USER
+    sudo usermod -a -G plugdev $USER
 
+If you still have problems with priviledges to access to the USB port, the best is to add a rule by doing the following:
+
+    sudo nano /etc/udev/rules.d/50-myusb.rules
+
+# Copy this text and save the file:
+    KERNEL=="ttyUSB[0-9]*",MODE="0666"
+    KERNEL=="ttyACM[0-9]*",MODE="0666"
+
+    
 Don't forget to restart the session after adding the user to the group.
 
 Usage
