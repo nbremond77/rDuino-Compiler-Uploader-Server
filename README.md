@@ -7,8 +7,8 @@ This server has been developed to close the gap between Blockly@rduino and the r
 
 install
 -------
-sudo pip install Flask
-chmod +x rDuino_uploader_server.py
+    sudo pip install Flask
+    chmod +x rDuino_uploader_server.py
 
 Usage
 -----
