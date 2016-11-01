@@ -23,6 +23,8 @@ Or:
     sudo usermod -a -G uucp $USER
     sudo usermod -a -G plugdev $USER
 
+Don't forget to restart the session after adding the user to the group.
+
 If you still have problems with priviledges to access to the USB port, the best is to add a rule by doing the following:
 
     sudo nano /etc/udev/rules.d/50-myusb.rules
@@ -32,8 +34,7 @@ Copy this text and save the file:
     KERNEL=="ttyUSB[0-9]*",MODE="0666"
     KERNEL=="ttyACM[0-9]*",MODE="0666"
 
-    
-Don't forget to restart the session after adding the user to the group.
+Unplug and replug the device to apply these rules.
 
 Usage
 -----
