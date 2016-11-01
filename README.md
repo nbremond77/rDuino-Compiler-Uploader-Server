@@ -36,7 +36,7 @@ The server get the code, prepare a shell command, and run it in order to have th
 If no error is found, your code is uploaded in the Arduino target. 
 You can get the results by looking at the page at
 http://127.0.0.1:5005/
-The bottom  of this page is periodically refreshed.
+The bottom of this page is periodically refreshed.
 
 
 
