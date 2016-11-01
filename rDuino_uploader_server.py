@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 
@@ -95,6 +95,7 @@ if sys.platform.startswith('win'):
 #    myTempDirectory = "D:\\Users\\s551544\\Documents\\Arduino\\blockly_upload_temp"
     myFileName = "blockly_upload_temp.ino"
     myHEXfile = "my_StandardFirmataPlus.ino.standard.hex"
+    myArduinoPrecommand = ""
     myArduinoToolPath = "D:\\Users\\s551544\\Personnel\\Tools\\Arduino\\"
 #    myArduinoToolPath = "C:\Programmation\\Arduino\\"
 #    myArduinoUploadExe = "arduino_debug.exe" # Windows
@@ -105,11 +106,13 @@ if sys.platform.startswith('win'):
 elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
     separator = "/"  # Linux
     myTempDirectory = "/home/nbremond/Arduino/blockly_upload_temp"
+#    myTempDirectory = "/tmp/Arduino/blockly_upload_temp"
     myFileName = "blockly_upload_temp.ino"    
     myHEXfile = "my_StandardFirmataPlus.ino.standard.hex"
-    myArduinoToolPath = ""
-    myArduinoUploadExe = "export DISPLAY=:0.0 && arduino " # Linux
-    myArduinoCompileExe = "export DISPLAY=:0.0 && arduino " # Linux
+    myArduinoPrecommand = "export DISPLAY=:0.0 && "
+    myArduinoToolPath = "/home/nbremond/Tools/Arduino/arduino-nightly/"
+    myArduinoUploadExe = "arduino " # Linux
+    myArduinoCompileExe = "arduino " # Linux
     myAvrDudeExe = "export DISPLAY=:0.0 && avrdude" # Linux
     myTarget = "/dev/ttyUSB0"    
 elif sys.platform.startswith('darwin'):
@@ -117,6 +120,7 @@ elif sys.platform.startswith('darwin'):
     myTempDirectory = "Arduino/blockly_upload_temp"
     myFileName = "blockly_upload_temp.ino"    
     myHEXfile = "my_StandardFirmataPlus.ino.standard.hex"
+    myArduinoPrecommand = ""
     myArduinoToolPath = "Arduino.app/Contents/MacOS"
     myArduinoUploadExe = "Arduino" # MAC - not tested
     myArduinoCompileExe = "Arduino" # MAC - not tested
@@ -169,10 +173,10 @@ def serial_ports():
             s = serial.Serial(port)
             s.close()
             result.append(port)
-            print("Serial port %s detected." % port)
+#            print("Serial port %s detected." % port)
         except (OSError, serial.SerialException):
             pass
-#    print("Result:%s" % result)
+    print("List of detected USB devices:%s" % result)
     return result
     
 
@@ -209,8 +213,8 @@ class RunProcess(Thread):
         """Code to be run during the thread."""
         print("--> ", end="")
         if not self.computingInProgress:
-#            print("Running : %s ..." % self.myCmd)
-            print("Running : %s ..." % ' '.join(self.myCmd))
+            print("Running : %s ..." % self.myCmd)
+#            print("Running : %s ..." % ' '.join(self.myCmd))
             if sys.platform.startswith('win'):
                 myProc = subprocess.Popen(self.myCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, shell=True)
             elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
@@ -369,8 +373,8 @@ def install_library():
         theLibrary = request.form['library']
         
         # arduino --install-library "Bridge:1.0.0"
-        #myCmd = myArduinoToolPath + myArduinoUploadExe +" "+myInstallLibrary+" "+theLibrary
-        myCmd = [myArduinoToolPath+myArduinoUploadExe, myInstallLibrary, theLibrary]
+        myCmd = myArduinoPrecommand+myArduinoToolPath + myArduinoUploadExe +" "+myInstallLibrary+" "+theLibrary
+#        myCmd = [myArduinoPrecommand+myArduinoToolPath+myArduinoUploadExe, myInstallLibrary, theLibrary]
         
         # Creation of the thread
         thread_1 = RunProcess(myCmd)
@@ -397,8 +401,8 @@ def install_board():
     
         theBoard = request.form['board']
         # arduino --install-boards "arduino:sam"
-#        myCmd = myArduinoToolPath + myArduinoUploadExe + " "+myInstallBoard+" "+theBoard
-        myCmd = [myArduinoToolPath+myArduinoUploadExe, myInstallBoard, theBoard]
+        myCmd = myArduinoPrecommand+myArduinoToolPath + myArduinoUploadExe + " "+myInstallBoard+" "+theBoard
+#        myCmd = [myArduinoPrecommand+myArduinoToolPath+myArduinoUploadExe, myInstallBoard, theBoard]
 
         # Creation of the thread
         thread_1 = RunProcess(myCmd)
@@ -541,8 +545,8 @@ def openIDE():
 
         # arduino --board arduino:avr:nano:cpu=atmega168 --port /dev/ttyACM0 --upload /path/to/sketch/sketch.ino
         compileTime = datetime.datetime.now()
-#        myCmd = myArduinoToolPath + myArduinoCompileExe +" "+myTempDirectory+separator+myFileName
-        myCmd = [myArduinoToolPath+myArduinoCompileExe, myTempDirectory+separator+myFileName]
+        myCmd = myArduinoPrecommand+myArduinoToolPath + myArduinoCompileExe +" "+myTempDirectory+separator+myFileName
+#        myCmd = [myArduinoPrecommand+myArduinoToolPath+myArduinoCompileExe, myTempDirectory+separator+myFileName]
             
         # Creation of the thread
         thread_1 = RunProcess(myCmd)
@@ -610,11 +614,18 @@ def upload():
         compileTime = datetime.datetime.now()
 #        myCmd = myArduinoToolPath + myArduinoUploadExe +" "+myBoardOptions+" "+myBoard+" "+myTargetOption+" "+myTarget+" "+myOption+" "+myCompileAndUploadOption+" "+myTempDirectory+separator+myFileName
         if myOption == "":
-            myCmd = [myArduinoToolPath+myArduinoUploadExe, myBoardOptions, myBoard, myTargetOption, myTarget, myCompileAndUploadOption, myTempDirectory+separator+myFileName]
+            #myCmd = [myArduinoPrecommand+myArduinoToolPath+myArduinoUploadExe, myBoardOptions, myBoard, myTargetOption, myTarget, myCompileAndUploadOption, myTempDirectory+separator+myFileName]
+
+            myCmd = myArduinoPrecommand+myArduinoToolPath+myArduinoUploadExe + " " + myBoardOptions + " " +  myBoard + " " +  myTargetOption + " " +  myTarget + " " +  myCompileAndUploadOption + " " +  myTempDirectory+separator+myFileName
+
         else:
-            myCmd = [myArduinoToolPath+myArduinoUploadExe, myBoardOptions, myBoard, myTargetOption, myTarget, myOption, myCompileAndUploadOption, myTempDirectory+separator+myFileName]
+            #myCmd = [myArduinoPrecommand+myArduinoToolPath+myArduinoUploadExe, myBoardOptions, myBoard, myTargetOption, myTarget, myOption, myCompileAndUploadOption, myTempDirectory+separator+myFileName]
+
+            myCmd = myArduinoPrecommand+myArduinoToolPath+myArduinoUploadExe + " " + myBoardOptions + " " +  myBoard + " " +  myTargetOption + " " +  myTarget + " " +  myOption + " " +  myCompileAndUploadOption + " " +  myTempDirectory+separator+myFileName
+
         # Clean the result:
-        theResult = "\nCommand: \n" + ' '.join(myCmd) + "\n\nResult:\n"
+#        theResult = "\nCommand: \n" + ' '.join(myCmd) + "\n\nResult:\n"
+        theResult = "\nCommand: \n" + ' ' + myCmd + "\n\nResult:\n"
 
         # Creation of the thread
         thread_1 = RunProcess(myCmd, theResult)
@@ -679,9 +690,12 @@ def compile():
         compileTime = datetime.datetime.now()
 #        myCmd = myArduinoToolPath + myArduinoCompileExe+" "+myBoardOptions+" "+myBoard+" "+myOption+" "+myCompileOption+" "+myTempDirectory+separator+myFileName
         if myOption == "":
-            myCmd = [myArduinoToolPath+myArduinoUploadExe, myBoardOptions, myBoard, myCompileOption, myTempDirectory+separator+myFileName]
+            #myCmd = [myArduinoPrecommand+myArduinoToolPath+myArduinoUploadExe, myBoardOptions, myBoard, myCompileOption, myTempDirectory+separator+myFileName]
+
+            myCmd = myArduinoPrecommand+myArduinoToolPath+myArduinoUploadExe + " " + myBoardOptions + " " + myBoard + " " + myCompileOption + " " + myTempDirectory+separator+myFileName
         else:
-            myCmd = [myArduinoToolPath+myArduinoUploadExe, myBoardOptions, myBoard, myOption, myCompileOption, myTempDirectory+separator+myFileName]
+            #myCmd = [myArduinoPrecommand+myArduinoToolPath+myArduinoUploadExe, myBoardOptions, myBoard, myOption, myCompileOption, myTempDirectory+separator+myFileName]
+            myCmd = myArduinoPrecommand+myArduinoToolPath+myArduinoUploadExe + " " + myBoardOptions + " " + myBoard + " " + myOption + " " + myCompileOption + " " + myTempDirectory+separator+myFileName
         
         # Creation of the thread
         thread_1 = RunProcess(myCmd)
@@ -723,6 +737,7 @@ def flaskrun(default_host="127.0.0.1",
     global myOptionList
     global myArduinoToolPath
     global myArduinoUploadExe
+    global myArduinoPrecommand
     global myArduinoCompileExe
     global debugMode
     global myTempDirectory
@@ -804,6 +819,7 @@ def flaskrun(default_host="127.0.0.1",
     print("   USB port            : %s" % myTarget)
     print("   Board               : %s" % myBoard)
     print("   Option              : %s" % myOption)
+    print("   Pre-Exec            : %s" % myArduinoPrecommand)
     print("   Exec path           : %s" % myArduinoToolPath)
     print("   Compile Exec        : %s" % myArduinoCompileExe)
     print("   Upload Exec         : %s" % myArduinoUploadExe)
