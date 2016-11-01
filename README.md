@@ -27,7 +27,8 @@ If you still have problems with priviledges to access to the USB port, the best 
 
     sudo nano /etc/udev/rules.d/50-myusb.rules
 
-# Copy this text and save the file:
+Copy this text and save the file:
+
     KERNEL=="ttyUSB[0-9]*",MODE="0666"
     KERNEL=="ttyACM[0-9]*",MODE="0666"
 
