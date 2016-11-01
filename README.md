@@ -9,6 +9,14 @@ Install
 -------
     sudo pip install Flask
     chmod +x rDuino_uploader_server.py
+You also need to add the current user to the group that allow /dev/ttySUBxx access. This group is generaly 'dialout' or 'uucp'. To check the appropriate groupname, try:
+    ls -l /dev/ttyUSB*
+Use:
+    sudo usermod -a -G dialout $USER
+Or
+    sudo usermod -a -G uucp $USER
+
+Don't forget to restart the session after adding the user to the group.
 
 Usage
 -----
