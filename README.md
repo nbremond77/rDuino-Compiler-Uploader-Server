@@ -15,9 +15,11 @@ You also need to add the current user to the group that allow /dev/ttySUBxx acce
     ls -l /dev/ttyUSB*
 
 Use:
+
     sudo usermod -a -G dialout $USER
 
-Or
+Or:
+
     sudo usermod -a -G uucp $USER
 
 Don't forget to restart the session after adding the user to the group.
